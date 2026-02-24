@@ -223,27 +223,31 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
 
       <div class="tab-panel active" id="scotus-tab-0">
         <h3>Problem Definition</h3>
-        <!-- YOUR CONTENT HERE -->
+        <p>
+          Are there trends with the appointment of Supreme Court Justices in relation to the relationship between race, gender, and political party?
+        </p>
+        <p>
+          There are many different characteristics of Supreme Court Justices that can affect their appointment and its success. There has been a prior correlation shown between the race and gender of Justices and the likelihood of being nominated and subsequently appointed. Nominations to the Court are given by the President, so this research seeks to see if there are correlations between the likelihood of Justices with a certain gender or race getting nominated, depending on their political party. In recent years, there has been more diversity among the Court; a correlation between those individuals and the likelihood of which party they would belong to can provide insight into how the Court can continue to grow.
+        </p>
       </div>
 
       <div class="tab-panel" id="scotus-tab-1">
         <h3>Data Description</h3>
-        <p>
-          Are there trends with the appointment of Supreme Court Justices in relation to the relationship between race, gender, and political party?
+       <p>
+          This data comes from Stonegroove’s “Supreme Court Demographic Database” on Kaggle (2021). This dataset is a subset of a much larger dataset from Epstein et al.’s “The U.S. Supreme Court Justices Database(2021).” Each row represents a different Justice in order of their appointment to the Court. Some of the columns in this subset are the Justices’ names, their date of birth, the state they were born in, their gender, their race, their religion, the state in which they lived, their political party, and the president who nominated the Justice. The key columns for the question at hand are the name column, the race column, the gender column, and the political party column. Considering this, assumptions will be made about the time periods of the date of birth of the Justices. Thurgood Marshall, who is data point 98 out of 117, will be considered the beginning of the period in which there was social progress that people of color and women could be considered for the Court, as he was appointed three years after the passing of the Civil Rights Act. It should be noted that with the shifts in the types of dominant political parties over the years, there will be subgroups with additional information needed based on the time period. From John Mclean, data point 22, until Earl Warren, data point 90, these data points will serve to represent the period of time in which the Democrats and Republicans had opposite values of the current understanding of the parties today. From John Jay, data point 1, to Robert Trimble, data point 21, the political parties are considered too different from the values of modern-day Republicans or Democrats to be remodeled as one, so their data will be observed separately, to reflect the correlation within the principles of the power and type of government within the founding-era period.
         </p>
       </div>
-        <p>
-          There are many different characteristics of Supreme Court Justices that can affect their appointment and its success. There has been a prior correlation shown between the race and gender of Justices and the likelihood of being nominated and subsequently appointed. Nominations to the Court are given by the President, so this research seeks to see if there are correlations between the likelihood of Justices with a certain gender or race getting nominated, depending on their political party. In recent years, there has been more diversity among the Court; a correlation between those individuals and the likelihood of which party they would belong to can provide insight into how the Court can continue to grow.
-        </p>
 
       <div class="tab-panel" id="scotus-tab-2">
         <h3>Data Cleaning &amp; Preparation</h3>
-        <!-- YOUR CONTENT HERE -->
+        <p>
+          As mentioned above, the values within the political parties can have different meanings based on the time period, so for this research, they will be reclassified for easier understanding of the values a modern audience will understand at first glance. All data points between 22 and 90 will be switched, disregarding data point 33(Whig). Any Justice between that period who was a Democrat will be classified as a Republican, and any vice-versa. This is to reflect the party switch between the 1940s and 1960s that was mentioned above. This will make the data more readable and cohesive for an understanding of the results. This will trade off the factual title of their party they had during their period on the Court, but will better reflect their values. To give historical understanding and recognition to the lack of freedoms given to people of color and women throughout history, the data will be rerun separately with a subgroup of data points 98 to 117. This is to represent the time period during and after people of color and women began to formally be recognized by the government to receive the same freedoms as white men. This subgroup will not be perfect to represent the smaller subgroups of when white women and women of color began to receive those rights and freedoms later on. To have more data points to work with, these different civil rights movements will be grouped together for the understanding of a period in which multiple minority groups began to have more formal opportunities. 
+        </p>
       </div>
 
       <div class="tab-panel" id="scotus-tab-3">
         <h3>Data Understanding &amp; Visualization</h3>
-        <!-- YOUR CONTENT HERE -->
+        
       </div>
 
       <div class="tab-panel" id="scotus-tab-4">

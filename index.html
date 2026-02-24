@@ -34,16 +34,273 @@
       </ul>
     </section>
 
-    <section id="projects" class="card">
-      <h2>Portfolio / Projects</h2>
-      <p class="muted">This area will hold project entries as the semester progresses.</p>
-      <div class="projects-grid">
-        <div class="project empty">
-          <strong>Projects coming soon</strong>
-          <p>Use this space to add semester projects, reports, and visualizations.</p>
+    <!--
+  DROP-IN REPLACEMENT for <section id="projects">
+  Paste your own content into each .tab-panel div.
+  Move <style> and <script> to your main files if preferred.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --accent:       #b5451b;
+  --accent-light: #f5e6df;
+  --accent-mid:   #d4714a;
+  --navy:         #1a2035;
+  --muted-text:   #6b7280;
+  --border:       #e5e7eb;
+  --card-bg:      #ffffff;
+  --surface:      #f8f7f5;
+  --radius:       12px;
+  --shadow-sm:    0 2px 8px rgba(0,0,0,0.07);
+  --shadow-md:    0 8px 32px rgba(0,0,0,0.12);
+  --shadow-lg:    0 24px 64px rgba(0,0,0,0.18);
+  --font-d:       'DM Serif Display', Georgia, serif;
+  --font-b:       'DM Sans', system-ui, sans-serif;
+}
+
+#projects { font-family: var(--font-b); }
+#projects h2 { font-family: var(--font-d); font-size: 1.6rem; color: var(--navy); margin-bottom: .25rem; }
+#projects > .muted { color: var(--muted-text); font-size: .875rem; margin-bottom: 1.5rem; }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.project-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  cursor: pointer; display: flex; flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .25s, transform .25s;
+  animation: cardIn .45s ease both;
+}
+@keyframes cardIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+.project-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.project-card-bar { height: 5px; background: linear-gradient(90deg, var(--accent), var(--accent-mid)); flex-shrink: 0; }
+.project-card-body { padding: 1.3rem 1.4rem 1.15rem; display: flex; flex-direction: column; gap: .55rem; flex: 1; }
+.project-tags { display: flex; flex-wrap: wrap; gap: .35rem; }
+.project-tag { font-size:.68rem; font-weight:600; letter-spacing:.07em; text-transform:uppercase; padding:.2em .65em; border-radius:999px; background:#f1ece8; color:#7c3b1e; }
+.project-card h3 { font-family: var(--font-d); font-size: 1.05rem; font-weight: 400; line-height: 1.35; color: var(--navy); margin: 0; }
+.project-card-body > p { font-size:.845rem; color:var(--muted-text); line-height:1.6; margin:0; flex:1; }
+.section-pills { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.1rem; }
+.section-pill { font-size:.66rem; background:var(--surface); color:var(--muted-text); border:1px solid var(--border); border-radius:4px; padding:.15em .5em; }
+.project-footer { display:flex; align-items:center; justify-content:space-between; margin-top:.6rem; font-size:.77rem; color:#9ca3af; padding-top:.7rem; border-top:1px solid var(--border); }
+.open-btn { font-size:.78rem; font-weight:600; color:var(--accent); display:flex; align-items:center; gap:.3rem; background:none; border:none; cursor:pointer; padding:0; font-family:var(--font-b); transition:gap .2s; }
+.open-btn:hover { gap:.5rem; }
+
+.project-card.empty { border-style:dashed; background:var(--surface); cursor:default; box-shadow:none; min-height:160px; align-items:center; justify-content:center; }
+.project-card.empty .project-card-body { align-items:center; text-align:center; }
+.project-card.empty:hover { box-shadow:none; transform:none; }
+.project-card.empty .project-card-bar { display:none; }
+
+.proj-modal-backdrop { position:fixed; inset:0; background:rgba(15,18,28,.65); backdrop-filter:blur(4px); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1.5rem; opacity:0; pointer-events:none; transition:opacity .28s ease; }
+.proj-modal-backdrop.open { opacity:1; pointer-events:all; }
+.proj-modal { background:#fff; border-radius:16px; width:100%; max-width:800px; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:var(--shadow-lg); transform:translateY(24px) scale(.97); transition:transform .3s cubic-bezier(.34,1.56,.64,1); font-family:var(--font-b); }
+.proj-modal-backdrop.open .proj-modal { transform:translateY(0) scale(1); }
+
+.proj-modal-header { background:var(--navy); color:#fff; padding:1.6rem 2rem 1.4rem; position:relative; flex-shrink:0; }
+.proj-modal-header .modal-tags { display:flex; gap:.4rem; margin-bottom:.7rem; flex-wrap:wrap; }
+.proj-modal-header .modal-tag { font-size:.68rem; font-weight:600; letter-spacing:.07em; text-transform:uppercase; padding:.2em .7em; border-radius:999px; background:rgba(255,255,255,.12); color:rgba(255,255,255,.85); }
+.proj-modal-header h2 { font-family:var(--font-d); font-size:1.4rem; font-weight:400; line-height:1.3; margin:0 2.5rem 0 0; }
+.proj-modal-close { position:absolute; top:1.2rem; right:1.4rem; background:rgba(255,255,255,.1); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+.proj-modal-close:hover { background:rgba(255,255,255,.22); }
+
+.proj-modal-tabs { display:flex; overflow-x:auto; border-bottom:1px solid var(--border); background:var(--surface); flex-shrink:0; scrollbar-width:none; }
+.proj-modal-tabs::-webkit-scrollbar { display:none; }
+.tab-btn { flex-shrink:0; padding:.75rem 1.05rem; font-size:.775rem; font-weight:500; color:var(--muted-text); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap; font-family:var(--font-b); transition:color .18s, border-color .18s; margin-bottom:-1px; }
+.tab-btn:hover { color:var(--navy); }
+.tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+
+.proj-modal-body { flex:1; overflow-y:auto; padding:1.8rem 2rem; line-height:1.72; font-size:.895rem; color:#374151; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+.tab-panel h3 { font-family:var(--font-d); font-size:1.3rem; color:var(--navy); margin:0 0 .8rem; font-weight:400; }
+.tab-panel h4 { font-size:.8rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin:1.4rem 0 .45rem; }
+.tab-panel p { margin:0 0 .85rem; }
+.tab-panel ul, .tab-panel ol { padding-left:1.3rem; margin:0 0 .85rem; }
+.tab-panel li { margin-bottom:.35rem; }
+pre { background:var(--navy); color:#e2e8f0; border-radius:8px; padding:1.1rem 1.3rem; overflow-x:auto; font-size:.8rem; line-height:1.65; font-family:'Fira Code',Consolas,monospace; margin:.7rem 0 1rem; }
+pre code { background:none; padding:0; color:inherit; font-size:inherit; }
+code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82em; font-family:'Fira Code',Consolas,monospace; color:var(--accent); }
+.info-box { background:var(--accent-light); border-left:3px solid var(--accent); border-radius:0 6px 6px 0; padding:.85rem 1rem; margin:.75rem 0 1rem; font-size:.86rem; }
+.info-box.blue  { background:#eff6ff; border-color:#3b82f6; }
+.info-box.amber { background:#fffbeb; border-color:#f59e0b; }
+.ref-list { list-style:none; padding:0; margin:0; }
+.ref-list li { padding:.6rem 0; border-bottom:1px solid var(--border); font-size:.84rem; }
+.ref-list li:last-child { border-bottom:none; }
+.ref-list a { color:var(--accent); word-break:break-word; }
+
+@media(max-width:600px){
+  .proj-modal-body { padding:1.25rem 1.1rem; }
+  .proj-modal-header { padding:1.2rem 1.1rem 1rem; }
+  .proj-modal-header h2 { font-size:1.1rem; }
+}
+</style>
+
+
+<section id="projects" class="card">
+  <h2>Portfolio / Projects</h2>
+  <p class="muted">Projects added throughout the semester — click a card to explore each one in full.</p>
+
+  <div class="projects-grid">
+
+    <div class="project-card" onclick="openProject('scotus')"
+         role="button" tabindex="0" aria-haspopup="dialog"
+         onkeydown="if(event.key==='Enter'||event.key===' ')openProject('scotus')">
+      <div class="project-card-bar"></div>
+      <div class="project-card-body">
+        <div class="project-tags">
+          <span class="project-tag">Data &amp; Viz</span>
+          <span class="project-tag">Politics</span>
+          <span class="project-tag">Social Justice</span>
+        </div>
+        <h3>Relationship between Race, Gender, and Political Party of Supreme Court Justices</h3>
+        <p>Exploring how demographic representation on the U.S. Supreme Court has evolved — and what the data reveals about power, appointment, and identity.</p>
+        <div class="section-pills">
+          <span class="section-pill">Problem Definition</span>
+          <span class="section-pill">Data Description</span>
+          <span class="section-pill">Data Cleaning</span>
+          <span class="section-pill">Visualization</span>
+          <span class="section-pill">Storytelling</span>
+          <span class="section-pill">Ethics &amp; Reflection</span>
+          <span class="section-pill">Code</span>
+          <span class="section-pill">References &amp; AI</span>
+        </div>
+        <div class="project-footer">
+          <span>8 sections</span>
+          <button class="open-btn" onclick="event.stopPropagation();openProject('scotus')">Read project →</button>
         </div>
       </div>
-    </section>
+    </div>
+
+    <div class="project-card empty">
+      <div class="project-card-body">
+        <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4" style="opacity:.3;margin-bottom:.3rem">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
+        <strong style="font-size:.85rem">More coming soon</strong>
+        <p style="font-size:.78rem">New projects will appear here as the semester progresses.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="proj-modal-backdrop" id="modal-scotus" role="dialog"
+     aria-modal="true" aria-labelledby="scotus-title"
+     onclick="handleBackdropClick(event,'scotus')">
+  <div class="proj-modal">
+
+    <div class="proj-modal-header">
+      <div class="modal-tags">
+        <span class="modal-tag">Data &amp; Viz</span>
+        <span class="modal-tag">Politics</span>
+        <span class="modal-tag">Social Justice</span>
+      </div>
+      <h2 id="scotus-title">Relationship between Race, Gender, and Political Party of Supreme Court Justices</h2>
+      <button class="proj-modal-close" onclick="closeProject('scotus')" aria-label="Close">✕</button>
+    </div>
+
+    <nav class="proj-modal-tabs">
+      <button class="tab-btn active" onclick="switchTab('scotus',0,this)">Problem Definition</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',1,this)">Data Description</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',2,this)">Data Cleaning</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',3,this)">Visualization</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',4,this)">Storytelling</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',5,this)">Limitations, Ethics &amp; Reflection</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',6,this)">Code</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',7,this)">References &amp; AI</button>
+    </nav>
+
+    <div class="proj-modal-body">
+
+      <div class="tab-panel active" id="scotus-tab-0">
+        <h3>Problem Definition</h3>
+        <!-- YOUR CONTENT HERE -->
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-1">
+        <h3>Data Description</h3>
+        <!-- YOUR CONTENT HERE -->
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-2">
+        <h3>Data Cleaning &amp; Preparation</h3>
+        <!-- YOUR CONTENT HERE -->
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-3">
+        <h3>Data Understanding &amp; Visualization</h3>
+        <!-- YOUR CONTENT HERE -->
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-4">
+        <h3>Storytelling &amp; Interpretation</h3>
+        <!-- YOUR CONTENT HERE -->
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-5">
+        <h3>Limitations, Ethics &amp; Reflection</h3>
+        <!-- YOUR CONTENT HERE -->
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-6">
+        <h3>Code</h3>
+        <!-- YOUR CONTENT HERE -->
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-7">
+        <h3>References &amp; AI Transparency</h3>
+        <!-- YOUR CONTENT HERE -->
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+function openProject(id) {
+  var el = document.getElementById('modal-' + id);
+  if (!el) return;
+  el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  el.querySelectorAll('.tab-panel').forEach(function(p,i){ p.classList.toggle('active', i===0); });
+  el.querySelectorAll('.tab-btn').forEach(function(b,i){ b.classList.toggle('active', i===0); });
+  el.querySelector('.proj-modal-body').scrollTop = 0;
+}
+function closeProject(id) {
+  var el = document.getElementById('modal-' + id);
+  if (!el) return;
+  el.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleBackdropClick(e, id) {
+  if (e.target === e.currentTarget) closeProject(id);
+}
+function switchTab(projectId, index, btn) {
+  var modal = document.getElementById('modal-' + projectId);
+  if (!modal) return;
+  modal.querySelectorAll('.tab-panel').forEach(function(p,i){ p.classList.toggle('active', i===index); });
+  modal.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  modal.querySelector('.proj-modal-body').scrollTop = 0;
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.proj-modal-backdrop.open').forEach(function(el){
+      closeProject(el.id.replace('modal-', ''));
+    });
+  }
+});
+</script>
 
     <section id="blog" class="card">
       <h2>Blog</h2>

@@ -335,7 +335,157 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
   </div>
 </div>
 
+<div class="proj-modal-backdrop" id="modal-scdb" role="dialog"
+     aria-modal="true" aria-labelledby="scdb-title"
+     onclick="handleBackdropClick(event,'scdb')">
+  <div class="proj-modal">
 
+    <div class="proj-modal-header">
+      <div class="modal-tags">
+        <span class="modal-tag">Machine Learning</span>
+        <span class="modal-tag">Politics</span>
+        <span class="modal-tag">Law</span>
+      </div>
+      <h2 id="scdb-title">Predicting Supreme Court Justice Votes Using Machine Learning</h2>
+      <button class="proj-modal-close" onclick="closeProject('scdb')" aria-label="Close">✕</button>
+    </div>
+
+    <nav class="proj-modal-tabs">
+      <button class="tab-btn active" onclick="switchTab('scdb',0,this)">Problem Definition</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',1,this)">Data Description</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',2,this)">Data Cleaning</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',3,this)">Modeling</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',4,this)">Results</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',5,this)">Ethics &amp; Reflection</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',6,this)">Code</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',7,this)">References &amp; AI</button>
+    </nav>
+
+    <div class="proj-modal-body">
+
+      <div class="tab-panel active" id="scdb-tab-0">
+        <h3>Problem Definition</h3>
+        <p>
+          Can a machine learning model predict how a Supreme Court justice will vote on a case based on who they are and what type of case is before them?
+        </p>
+        <p>
+          Individual justices carry distinct judicial philosophies, ideological leanings, and records across different areas of law — from criminal procedure to civil rights to economic activity. At the same time, certain case types consistently produce more divided Courts than others. This project asks whether those patterns are strong enough that a classifier can learn them: given a justice's identity and the category of a case, can the model predict whether they will vote with the majority, dissent, or take some other position?
+        </p>
+        <p>
+          Understanding judicial voting patterns has real implications for legal strategy, policy advocacy, and democratic accountability. It also raises important questions about what it means to predict human judgment with an algorithm.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-1">
+        <h3>Data Description</h3>
+        <p>
+          This project uses the Supreme Court Database (SCDB), version 2025_01, justice-centered and organized by legal provision. The SCDB is maintained by Harold J. Spaeth and colleagues and is one of the most comprehensive datasets on U.S. Supreme Court decisions, spanning cases from 1946 to the present term.
+        </p>
+        <p>
+          The full dataset contains 124,797 rows, where each row represents a single justice's vote on a single case. There are 61 columns covering case identifiers, citation information, dates, case characteristics, issue classifications, and justice-level voting data. The target variable for this project is <code>vote</code>, which takes values 1 through 8 — where 1 indicates a vote with the majority, 2 indicates a dissent, and values 3–8 represent concurrences, judgments, and other specialized vote types.
+        </p>
+        <p>
+          The key predictive features retained for modeling were <code>justice</code> (numeric ID), <code>justiceName</code> (string, encoded to integer), and <code>issueArea</code> (one of 14 broad legal categories such as Criminal Procedure, Civil Rights, and First Amendment), supplemented by case-level context variables including <code>decisionDirection</code>, <code>lcDisposition</code>, <code>certReason</code>, <code>jurisdiction</code>, <code>partyWinning</code>, <code>majVotes</code>, <code>minVotes</code>, and <code>decisionType</code>.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-2">
+        <h3>Data Cleaning &amp; Preparation</h3>
+        <p>
+          Of the 61 original columns, only 13 were retained for modeling. Columns removed included all case identifiers (IDs, docket numbers, citation strings), free-text fields, date columns, and post-decision variables that would leak outcome information into the features. The remaining columns were selected because they are plausibly available at or before decision time.
+        </p>
+        <p>
+          3,451 rows were missing the <code>vote</code> target variable and were dropped, leaving 121,346 usable rows. The string column <code>justiceName</code> was encoded to an integer using <code>pd.factorize()</code>. Remaining missing values in feature columns — the largest being <code>lcDisposition</code> with 20,371 nulls — were filled using column medians rather than dropping rows, to preserve as much data as possible.
+        </p>
+        <p>
+          The vote distribution is heavily imbalanced: vote=1 accounts for 85,734 rows (~71%), vote=2 for 22,513 (~19%), and all other vote types combined for the remaining ~10%. This imbalance is the central challenge for all three models.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-3">
+        <h3>Modeling Approach</h3>
+        <p>
+          Three classifiers were trained and compared, each representing a different algorithmic family:
+        </p>
+        <h4>Decision Tree</h4>
+        <p>
+          A single decision tree with <code>max_depth=10</code> and <code>min_samples_leaf=20</code> to prevent overfitting. Decision trees are fully interpretable — the top three levels can be visualized to understand what splits the model makes first. This model serves as the transparent baseline.
+        </p>
+        <h4>Random Forest</h4>
+        <p>
+          An ensemble of 100 decision trees (<code>n_estimators=100</code>), using the same depth and leaf constraints. By aggregating predictions across many trees trained on random subsets of the data, random forests reduce the variance that makes a single tree unstable. This model is expected to be the most accurate but least interpretable.
+        </p>
+        <h4>K-Nearest Neighbors (KNN)</h4>
+        <p>
+          A distance-based classifier with <code>k=9</code> neighbors. Because KNN is sensitive to feature scale, the input features were standardized with <code>StandardScaler</code> before fitting. In cross-validation, the scaler was wrapped inside a <code>Pipeline</code> so that it is fit only on training folds, preventing data leakage. KNN makes predictions based on the similarity of a case-justice pair to historical examples, making it a fundamentally different approach from the tree-based models.
+        </p>
+        <p>
+          All models were evaluated on an 80/20 train-test split (stratified by random seed 42) and validated further with 5-fold cross-validation.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-4">
+        <h3>Results</h3>
+        <h4>Accuracy &amp; Weighted Metrics</h4>
+        <p>
+          All three models achieved similar test-set accuracy in the range of 75–76%. However, the gap between weighted F1 (~0.70) and macro F1 (~0.29–0.43) reveals that this accuracy is largely driven by correct predictions on the dominant vote=1 class. A model that predicted "majority" for every case would achieve roughly 71% accuracy — so the models are adding only about 4–5 percentage points above that naive baseline.
+        </p>
+        <h4>Per-Class Performance</h4>
+        <p>
+          Vote=1 was predicted well by all three models (recall of 92–98%). Vote=2 (dissent) was the hardest meaningful class: the best recall achieved was 43% (Decision Tree and KNN), while Random Forest only caught 30% of dissents. For rarer vote types (3–7), Random Forest scored 0% recall on most classes, effectively never predicting them. KNN performed the best on minority classes — achieving 12% recall on vote=3, 15% on vote=4 — and had the highest macro F1 (0.4275), meaning it was the most balanced across all vote types. Vote=8 was predicted with near-perfect accuracy by all three models, suggesting it has a very distinctive feature signature.
+        </p>
+        <h4>Cross-Validation</h4>
+        <p>
+          5-fold CV confirmed Random Forest as the most stable model (accuracy 72.44% ± 1.62%), followed by Decision Tree (71.78% ± 2.69%) and KNN (67.84% ± 2.84%). KNN's larger drop from single-split to CV accuracy suggests it benefited somewhat from the particular 80/20 split used in the main evaluation.
+        </p>
+        <div class="info-box amber">
+          The class imbalance in the SCDB — where majority votes outnumber all other types roughly 7:1 — is the binding constraint on all three models. Addressing it through techniques such as <code>class_weight='balanced'</code> or SMOTE oversampling would be the most impactful next step for improving predictions on dissents and concurrences.
+        </div>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-5">
+        <h3>Ethics &amp; Reflection</h3>
+        <p>
+          Predicting judicial votes raises meaningful ethical concerns beyond model performance. Judges are people, not data points, and reducing a justice's decision to a predicted output based on their identity and a case category risks flattening the complexity of legal reasoning into a statistical pattern. The model does not know what arguments were made, how briefs were written, or what values a justice weighed — it only knows who voted how in the past.
+        </p>
+        <p>
+          There is also a risk of self-fulfilling inference: if litigants or advocates use predictive tools to select which arguments to make or which courts to pursue, model predictions could subtly shape the very outcomes they claim to merely forecast. This feedback loop is especially concerning when the model disproportionately fails minority vote classes, meaning it is most uncertain precisely in the cases that deviate from norm.
+        </p>
+        <p>
+          The heavy class imbalance in this dataset is itself a reflection of how the Court works — the majority of cases produce large majorities. A model trained primarily on those cases will learn to reproduce consensus, not disagreement. Whether that is a technical limitation or a substantive finding is a question worth holding carefully.
+        </p>
+        <p>
+          In terms of transparency: all features used are public record, all modeling choices are documented in the code, and no personally identifying information beyond publicly available judicial records was used. The SCDB is a widely cited and peer-reviewed academic resource.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-6">
+        <h3>Code</h3>
+        <p>The code for this project is available here:
+          <a href="SCDB_Vote_Prediction.html">View Code</a>
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-7">
+        <h3>References &amp; AI Transparency</h3>
+        <p>
+          Spaeth, H., Epstein, L., Martin, A. D., Segal, J., Ruger, T., &amp; Benesh, S. (2025). <em>Supreme Court Database, Version 2025_01</em> [Dataset]. http://supremecourtdatabase.org
+        </p>
+        <p>
+          Breiman, L. (2001). Random forests. <em>Machine Learning, 45</em>(1), 5–32.
+        </p>
+        <p>
+          Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. <em>Journal of Machine Learning Research, 12</em>, 2825–2830.
+        </p>
+        <p>
+          Portions of the code used for data cleaning, modeling, and visualization were generated with assistance from Claude (Anthropic, 2026). All generated code was reviewed, tested, and modified by the author.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+    
 <script>
 function openProject(id) {
   var el = document.getElementById('modal-' + id);

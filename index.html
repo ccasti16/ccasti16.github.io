@@ -428,14 +428,17 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
       <div class="tab-panel" id="scdb-tab-4">
         <h3>Results</h3>
         <h4>Accuracy &amp; Weighted Metrics</h4>
+        <img src="Model_Comparison.png" alt="The Comparison of All Models for Accuracy Metrics." width="80%">
         <p>
           All three models achieved similar test-set accuracy in the range of 75–76%. However, the gap between weighted F1 (~0.70) and macro F1 (~0.29–0.43) reveals that this accuracy is largely driven by correct predictions on the dominant vote=1 class. A model that predicted "majority" for every case would achieve roughly 71% accuracy — so the models are adding only about 4–5 percentage points above that naive baseline.
         </p>
         <h4>Per-Class Performance</h4>
+        <img src="Feature_Importance.png" alt="The Visualization of the Feature Performance." width="80%">
         <p>
           Vote=1 was predicted well by all three models (recall of 92–98%). Vote=2 (dissent) was the hardest meaningful class: the best recall achieved was 43% (Decision Tree and KNN), while Random Forest only caught 30% of dissents. For rarer vote types (3–7), Random Forest scored 0% recall on most classes, effectively never predicting them. KNN performed the best on minority classes — achieving 12% recall on vote=3, 15% on vote=4 — and had the highest macro F1 (0.4275), meaning it was the most balanced across all vote types. Vote=8 was predicted with near-perfect accuracy by all three models, suggesting it has a very distinctive feature signature.
         </p>
         <h4>Cross-Validation</h4>
+        <img src="5_Fold_CV.png" alt="The Visualization of the 5-Fold CV." width="80%">
         <p>
           5-fold CV confirmed Random Forest as the most stable model (accuracy 72.44% ± 1.62%), followed by Decision Tree (71.78% ± 2.69%) and KNN (67.84% ± 2.84%). KNN's larger drop from single-split to CV accuracy suggests it benefited somewhat from the particular 80/20 split used in the main evaluation.
         </p>

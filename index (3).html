@@ -1,0 +1,604 @@
+<!-- ...existing code... -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portfolio — Placeholder</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="site-title">Carly C.</h1>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#about">About</a>
+        <a href="#projects">Portfolio</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="about" class="card">
+      <h2>About Me</h2>
+      <p>
+        Hi — I'm Carly, a third year student learning data science with a focus on social
+        and interdisciplinary problems within political science and the law.
+      </p>
+      <ul class="meta">
+        <li>Location: Charlotte, NC</li>
+        <li>Interests: data analysis, visualization, social research</li>
+        <li>Tools: Python, R, Java</li>
+      </ul>
+    </section>
+
+    <!--
+  DROP-IN REPLACEMENT for <section id="projects">
+  Paste your own content into each .tab-panel div.
+  Move <style> and <script> to your main files if preferred.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --accent:       #b5451b;
+  --accent-light: #f5e6df;
+  --accent-mid:   #d4714a;
+  --navy:         #1a2035;
+  --muted-text:   #6b7280;
+  --border:       #e5e7eb;
+  --card-bg:      #ffffff;
+  --surface:      #f8f7f5;
+  --radius:       12px;
+  --shadow-sm:    0 2px 8px rgba(0,0,0,0.07);
+  --shadow-md:    0 8px 32px rgba(0,0,0,0.12);
+  --shadow-lg:    0 24px 64px rgba(0,0,0,0.18);
+  --font-d:       'DM Serif Display', Georgia, serif;
+  --font-b:       'DM Sans', system-ui, sans-serif;
+}
+
+#projects { font-family: var(--font-b); }
+#projects h2 { font-family: var(--font-d); font-size: 1.6rem; color: var(--navy); margin-bottom: .25rem; }
+#projects > .muted { color: var(--muted-text); font-size: .875rem; margin-bottom: 1.5rem; }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.project-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  cursor: pointer; display: flex; flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .25s, transform .25s;
+  animation: cardIn .45s ease both;
+}
+@keyframes cardIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+.project-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.project-card-bar { height: 5px; background: linear-gradient(90deg, var(--accent), var(--accent-mid)); flex-shrink: 0; }
+.project-card-body { padding: 1.3rem 1.4rem 1.15rem; display: flex; flex-direction: column; gap: .55rem; flex: 1; }
+.project-tags { display: flex; flex-wrap: wrap; gap: .35rem; }
+.project-tag { font-size:.68rem; font-weight:600; letter-spacing:.07em; text-transform:uppercase; padding:.2em .65em; border-radius:999px; background:#f1ece8; color:#7c3b1e; }
+.project-card h3 { font-family: var(--font-d); font-size: 1.05rem; font-weight: 400; line-height: 1.35; color: var(--navy); margin: 0; }
+.project-card-body > p { font-size:.845rem; color:var(--muted-text); line-height:1.6; margin:0; flex:1; }
+.section-pills { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.1rem; }
+.section-pill { font-size:.66rem; background:var(--surface); color:var(--muted-text); border:1px solid var(--border); border-radius:4px; padding:.15em .5em; }
+.project-footer { display:flex; align-items:center; justify-content:space-between; margin-top:.6rem; font-size:.77rem; color:#9ca3af; padding-top:.7rem; border-top:1px solid var(--border); }
+.open-btn { font-size:.78rem; font-weight:600; color:var(--accent); display:flex; align-items:center; gap:.3rem; background:none; border:none; cursor:pointer; padding:0; font-family:var(--font-b); transition:gap .2s; }
+.open-btn:hover { gap:.5rem; }
+
+.project-card.empty { border-style:dashed; background:var(--surface); cursor:default; box-shadow:none; min-height:160px; align-items:center; justify-content:center; }
+.project-card.empty .project-card-body { align-items:center; text-align:center; }
+.project-card.empty:hover { box-shadow:none; transform:none; }
+.project-card.empty .project-card-bar { display:none; }
+
+.proj-modal-backdrop { position:fixed; inset:0; background:rgba(15,18,28,.65); backdrop-filter:blur(4px); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1.5rem; opacity:0; pointer-events:none; transition:opacity .28s ease; }
+.proj-modal-backdrop.open { opacity:1; pointer-events:all; }
+.proj-modal { background:#fff; border-radius:16px; width:100%; max-width:800px; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:var(--shadow-lg); transform:translateY(24px) scale(.97); transition:transform .3s cubic-bezier(.34,1.56,.64,1); font-family:var(--font-b); }
+.proj-modal-backdrop.open .proj-modal { transform:translateY(0) scale(1); }
+
+.proj-modal-header { background:var(--navy); color:#fff; padding:1.6rem 2rem 1.4rem; position:relative; flex-shrink:0; }
+.proj-modal-header .modal-tags { display:flex; gap:.4rem; margin-bottom:.7rem; flex-wrap:wrap; }
+.proj-modal-header .modal-tag { font-size:.68rem; font-weight:600; letter-spacing:.07em; text-transform:uppercase; padding:.2em .7em; border-radius:999px; background:rgba(255,255,255,.12); color:rgba(255,255,255,.85); }
+.proj-modal-header h2 { font-family:var(--font-d); font-size:1.4rem; font-weight:400; line-height:1.3; margin:0 2.5rem 0 0; }
+.proj-modal-close { position:absolute; top:1.2rem; right:1.4rem; background:rgba(255,255,255,.1); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+.proj-modal-close:hover { background:rgba(255,255,255,.22); }
+
+.proj-modal-tabs { display:flex; overflow-x:auto; border-bottom:1px solid var(--border); background:var(--surface); flex-shrink:0; scrollbar-width:none; }
+.proj-modal-tabs::-webkit-scrollbar { display:none; }
+.tab-btn { flex-shrink:0; padding:.75rem 1.05rem; font-size:.775rem; font-weight:500; color:var(--muted-text); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap; font-family:var(--font-b); transition:color .18s, border-color .18s; margin-bottom:-1px; }
+.tab-btn:hover { color:var(--navy); }
+.tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+
+.proj-modal-body { flex:1; overflow-y:auto; padding:1.8rem 2rem; line-height:1.72; font-size:.895rem; color:#374151; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+.tab-panel h3 { font-family:var(--font-d); font-size:1.3rem; color:var(--navy); margin:0 0 .8rem; font-weight:400; }
+.tab-panel h4 { font-size:.8rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin:1.4rem 0 .45rem; }
+.tab-panel p { margin:0 0 .85rem; }
+.tab-panel ul, .tab-panel ol { padding-left:1.3rem; margin:0 0 .85rem; }
+.tab-panel li { margin-bottom:.35rem; }
+pre { background:var(--navy); color:#e2e8f0; border-radius:8px; padding:1.1rem 1.3rem; overflow-x:auto; font-size:.8rem; line-height:1.65; font-family:'Fira Code',Consolas,monospace; margin:.7rem 0 1rem; }
+pre code { background:none; padding:0; color:inherit; font-size:inherit; }
+code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82em; font-family:'Fira Code',Consolas,monospace; color:var(--accent); }
+.info-box { background:var(--accent-light); border-left:3px solid var(--accent); border-radius:0 6px 6px 0; padding:.85rem 1rem; margin:.75rem 0 1rem; font-size:.86rem; }
+.info-box.blue  { background:#eff6ff; border-color:#3b82f6; }
+.info-box.amber { background:#fffbeb; border-color:#f59e0b; }
+.ref-list { list-style:none; padding:0; margin:0; }
+.ref-list li { padding:.6rem 0; border-bottom:1px solid var(--border); font-size:.84rem; }
+.ref-list li:last-child { border-bottom:none; }
+.ref-list a { color:var(--accent); word-break:break-word; }
+
+@media(max-width:600px){
+  .proj-modal-body { padding:1.25rem 1.1rem; }
+  .proj-modal-header { padding:1.2rem 1.1rem 1rem; }
+  .proj-modal-header h2 { font-size:1.1rem; }
+}
+</style>
+
+
+<section id="projects" class="card">
+  <h2>Portfolio / Projects</h2>
+  <p class="muted">Projects added throughout the semester — click a card to explore each one in full.</p>
+
+  <div class="projects-grid">
+
+    <div class="project-card" onclick="openProject('scotus')"
+         role="button" tabindex="0" aria-haspopup="dialog"
+         onkeydown="if(event.key==='Enter'||event.key===' ')openProject('scotus')">
+      <div class="project-card-bar"></div>
+      <div class="project-card-body">
+        <div class="project-tags">
+          <span class="project-tag">Data &amp; Viz</span>
+          <span class="project-tag">Politics</span>
+          <span class="project-tag">Social Justice</span>
+        </div>
+        <h3>Relationship between Race, Gender, and Political Party of Supreme Court Justices</h3>
+        <p>Exploring how demographic representation on the U.S. Supreme Court has evolved — and what the data reveals about power, appointment, and identity.</p>
+        <div class="section-pills">
+          <span class="section-pill">Problem Definition</span>
+          <span class="section-pill">Data Description</span>
+          <span class="section-pill">Data Cleaning</span>
+          <span class="section-pill">Visualization</span>
+          <span class="section-pill">Storytelling</span>
+          <span class="section-pill">Ethics &amp; Reflection</span>
+          <span class="section-pill">Code</span>
+          <span class="section-pill">References &amp; AI</span>
+        </div>
+        <div class="project-footer">
+          <span>8 sections</span>
+          <button class="open-btn" onclick="event.stopPropagation();openProject('scotus')">Read project →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card" onclick="openProject('scdb')"
+         role="button" tabindex="0" aria-haspopup="dialog"
+         onkeydown="if(event.key==='Enter'||event.key===' ')openProject('scdb')">
+      <div class="project-card-bar"></div>
+      <div class="project-card-body">
+        <div class="project-tags">
+          <span class="project-tag">Machine Learning</span>
+          <span class="project-tag">Politics</span>
+          <span class="project-tag">Law</span>
+        </div>
+        <h3>Predicting Supreme Court Justice Votes Using Machine Learning</h3>
+        <p>Comparing three classifiers — Decision Tree, Random Forest, and KNN — to predict how a justice will vote based on their identity and the type of case.</p>
+        <div class="section-pills">
+          <span class="section-pill">Problem Definition</span>
+          <span class="section-pill">Data Description</span>
+          <span class="section-pill">Data Cleaning</span>
+          <span class="section-pill">Modeling</span>
+          <span class="section-pill">Results</span>
+          <span class="section-pill">Ethics &amp; Reflection</span>
+          <span class="section-pill">Code</span>
+          <span class="section-pill">References &amp; AI</span>
+        </div>
+        <div class="project-footer">
+          <span>8 sections</span>
+          <button class="open-btn" onclick="event.stopPropagation();openProject('scdb')">Read project →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card empty">
+      <div class="project-card-body">
+        <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4" style="opacity:.3;margin-bottom:.3rem">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
+        <strong style="font-size:.85rem">More coming soon</strong>
+        <p style="font-size:.78rem">New projects will appear here as the semester progresses.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="proj-modal-backdrop" id="modal-scotus" role="dialog"
+     aria-modal="true" aria-labelledby="scotus-title"
+     onclick="handleBackdropClick(event,'scotus')">
+  <div class="proj-modal">
+
+    <div class="proj-modal-header">
+      <div class="modal-tags">
+        <span class="modal-tag">Data &amp; Viz</span>
+        <span class="modal-tag">Politics</span>
+        <span class="modal-tag">Social Justice</span>
+      </div>
+      <h2 id="scotus-title">Relationship between Race, Gender, and Political Party of Supreme Court Justices</h2>
+      <button class="proj-modal-close" onclick="closeProject('scotus')" aria-label="Close">✕</button>
+    </div>
+
+    <nav class="proj-modal-tabs">
+      <button class="tab-btn active" onclick="switchTab('scotus',0,this)">Problem Definition</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',1,this)">Data Description</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',2,this)">Data Cleaning</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',3,this)">Visualization</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',4,this)">Storytelling</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',5,this)">Limitations, Ethics &amp; Reflection</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',6,this)">Code</button>
+      <button class="tab-btn"        onclick="switchTab('scotus',7,this)">References &amp; AI</button>
+    </nav>
+
+    <div class="proj-modal-body">
+
+      <div class="tab-panel active" id="scotus-tab-0">
+        <h3>Problem Definition</h3>
+        <p>
+          Are there trends with the appointment of Supreme Court Justices in relation to the relationship between race, gender, and political party?
+        </p>
+        <p>
+          There are many different characteristics of Supreme Court Justices that can affect their appointment and its success. There has been a prior correlation shown between the race and gender of Justices and the likelihood of being nominated and subsequently appointed. Nominations to the Court are given by the President, so this research seeks to see if there are correlations between the likelihood of Justices with a certain gender or race getting nominated, depending on their political party. In recent years, there has been more diversity among the Court; a correlation between those individuals and the likelihood of which party they would belong to can provide insight into how the Court can continue to grow.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-1">
+        <h3>Data Description</h3>
+       <p>
+          This data comes from Stonegroove’s “Supreme Court Demographic Database” on Kaggle (2021). This dataset is a subset of a much larger dataset from Epstein et al.’s “The U.S. Supreme Court Justices Database(2021).” Each row represents a different Justice in order of their appointment to the Court. Some of the columns in this subset are the Justices’ names, their date of birth, the state they were born in, their gender, their race, their religion, the state in which they lived, their political party, and the president who nominated the Justice. The key columns for the question at hand are the name column, the race column, the gender column, and the political party column. Considering this, assumptions will be made about the time periods of the date of birth of the Justices. Thurgood Marshall, who is data point 98 out of 117, will be considered the beginning of the period in which there was social progress that people of color and women could be considered for the Court, as he was appointed three years after the passing of the Civil Rights Act. It should be noted that with the shifts in the types of dominant political parties over the years, there will be subgroups with additional information needed based on the time period. From John Mclean, data point 22, until Earl Warren, data point 90, these data points will serve to represent the period of time in which the Democrats and Republicans had opposite values of the current understanding of the parties today. From John Jay, data point 1, to Robert Trimble, data point 21, the political parties are considered too different from the values of modern-day Republicans or Democrats to be remodeled as one, so their data will be observed separately, to reflect the correlation within the principles of the power and type of government within the founding-era period.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-2">
+        <h3>Data Cleaning &amp; Preparation</h3>
+        <img src="Subgroup.png" alt="The Code to Create a Subgroup of Data with Race, Gender, and Political Party" width="80%">
+        <img src="Party_Swap.png" alt="The Code to Swap the Democrat and Republican Classifications Over A Specific Group of Time" width="80%">
+        <img src="Post_Civil_Rights_Subgroup.png" alt="The Code to Create a Subgroup After the Civil Rights Act was Passed" width="80%">
+        <p>
+          As mentioned above, the values within the political parties can have different meanings based on the time period(U.S. Embassy in Denmark, n.d.), so for this research, they will be reclassified for easier understanding of the values a modern audience will understand at first glance. All data points between 22 and 90 will be switched, disregarding data point 33(Whig). Any Justice between that period who was a Democrat will be classified as a Republican, and any vice-versa. This is to reflect the party switch between the 1940s and 1960s that was mentioned above. This will make the data more readable and cohesive for an understanding of the results. This will trade off the factual title of their party they had during their period on the Court, but will better reflect their values. To give historical understanding and recognition to the lack of freedoms given to people of color and women throughout history, the data will be rerun separately with a subgroup of data points 98 to 117. This is to represent the time period during and after people of color and women began to formally be recognized by the government to receive the same freedoms as white men. This subgroup will not be perfect to represent the smaller subgroups of when white women and women of color began to receive those rights and freedoms later on. To have more data points to work with, these different civil rights movements will be grouped together for the understanding of a period in which multiple minority groups began to have more formal opportunities. 
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-3">
+        <h3>Data Understanding &amp; Visualization</h3>
+        <img src="Overall_Race_Heatmap.png" alt="The Heatmap for the Correlation Between Race and Political Party With the Entire Dataset" width="80%">
+        <img src="Overall_Gender_Heatmap.png" alt="The Heatmap for the Correlation Between Gender and Political Party With the Entire Dataset" width="80%">
+        <img src="Civil_Rights_Race_Heatmap.png" alt="The Heatmap for the Correlation Between Race and Political Party Post Civil Rights Era" width="80%">
+        <img src="Civil_Rights_Gender_Heatmap.png" alt="The Heatmap for the Correlation Between Gender and Political Party Post Civil Rights Era" width="80%">
+        <p>
+          Heatmaps and bar graphs were initially used to visualize the data, but as the research progressed, both of the visualizations told the same story, so only the bar graphs were removed for the sake of the size of the project. The heatmap showed a better correlation between the different variables because in the initial subgroup, the number of people of color and women was so low that it was barely noticeable. The heatmap showed the same correlation, but allowed for better visualization. Not many patterns or trends were surprising due to the limited data based on the history and the unlimited term of Supreme Court Justices. There were higher rates of white males in both categories, even after creating a new subgroup to account for after the Civil Rights Act had been passed, but that was to be expected.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-4">
+        <h3>Storytelling &amp; Interpretation</h3>
+        <p>
+          The findings show that there was no significant correlation between either race or gender in correlation to political party in either subgroup. When looking at the heatmaps, it does seem as if there is a slight majority of women in the post-Civil Rights Act subgroup that are registered as Democrats, but due to the lack of further data, there can be no significant result. This doesn’t mean that there isn’t some possible correlation, just that it is too soon after the Civil Rights Act to see any significant impact or correlation with parties. The heatmaps show that there may be a trend beginning with more people of color and women in the democratic party, but with how few members there are, and the fact that multiple Justices fit into multiple minority categories of race and gender, there needs to be more data to find a result. As time moves forward, more work can be done to have a more diverse Court, while still balancing all of the other requirements of being appointed. It would be misleading to conclude anything from this data since all of the p-values from each test were above 0.5. 
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scotus-tab-5">
+        <h3>Limitations, Ethics &amp; Reflection</h3>
+        <p>
+          Considering the unlimited terms and relatively short history of the United States, there is limited data available in this dataset to make a statistical conclusion. Despite creating subgroups to account for the long history in which people of color and women did not have the same freedoms and opportunities to run for the court, there is still far too little Justices and diversity to conclude anything. The heatmaps show interesting data and slight curves to democratic Justices being more even in diversity after the Civil Rights Act was passed; however, all of the significance testing still shows no significant correlation between either gender or race in relation to political party.
+        </p>
+        <p>
+          The major assumption made in this research was that switching the “Republican” and “Democrat” values over the course of about sixty Justices. The decision to swap the classifications came from a need to clarify the data more, as the values and definitions of the parties swapped over time. However, if there was any outlier within that time period who was listed as their political party, yet had the values that we currently attribute to it in this modern day, their data could be skewed. 
+        </p>
+        <p>
+          The data was not very surprising. The research was conducted with the knowledge that there would not be enough data to conclude anything statistically significant. However, it was a research question that was authentic to be considered with the current trend of the Court. 
+        </p>
+        <p>
+          Ideally, this research could be redone in a hundred years when there are far more Justices since the Civil Rights Act. If there were more time to do this research now, the most interesting variable to add would be the time each justice served on the Court. Certain justices have served for very long times on the Court; it would be an intriguing study to see if there is a correlation between party, which is more likely to sit on the Court for longer.
+        </p>
+      </div>
+
+     <div class="tab-panel" id="scotus-tab-6">
+  <h3>Code</h3>
+  <p>The code for the project is: 
+    <a href="Project_1_Code.html">View Code</a>
+  </p>
+</div>
+
+      <div class="tab-panel" id="scotus-tab-7">
+        <h3>References &amp; AI Transparency</h3>
+        <p>
+          rlweath. (n.d.). Supreme Court Demographic Database [Dataset]. Kaggle. https://www.kaggle.com/datasets/rlweath/supreme-court-demographic-database
+        </p>
+        <p>
+          U.S. Embassy in Denmark. (n.d.). Presidential elections and the American political system. https://dk.usembassy.gov/usa-i-skolen/presidential-elections-and-the-american-political-system/
+        </p>
+        <p>
+          Portions of the code used for data cleaning and visualization were generated with assistance from GitHub Copilot (GitHub, 2026) and Claude (Anthropic, 2026). All generated code was reviewed, tested, and modified by the author.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="proj-modal-backdrop" id="modal-scdb" role="dialog"
+     aria-modal="true" aria-labelledby="scdb-title"
+     onclick="handleBackdropClick(event,'scdb')">
+  <div class="proj-modal">
+
+    <div class="proj-modal-header">
+      <div class="modal-tags">
+        <span class="modal-tag">Machine Learning</span>
+        <span class="modal-tag">Politics</span>
+        <span class="modal-tag">Law</span>
+      </div>
+      <h2 id="scdb-title">Predicting Supreme Court Justice Votes Using Machine Learning</h2>
+      <button class="proj-modal-close" onclick="closeProject('scdb')" aria-label="Close">✕</button>
+    </div>
+
+    <nav class="proj-modal-tabs">
+      <button class="tab-btn active" onclick="switchTab('scdb',0,this)">Problem Definition</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',1,this)">Data Description</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',2,this)">Data Cleaning</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',3,this)">Modeling</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',4,this)">Results</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',5,this)">Ethics &amp; Reflection</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',6,this)">Code</button>
+      <button class="tab-btn"        onclick="switchTab('scdb',7,this)">References &amp; AI</button>
+    </nav>
+
+    <div class="proj-modal-body">
+
+      <div class="tab-panel active" id="scdb-tab-0">
+        <h3>Problem Definition</h3>
+        <p>
+          Can a machine learning model predict how a Supreme Court justice will vote on a case based on who they are and what type of case is before them?
+        </p>
+        <p>
+          Individual justices carry distinct judicial philosophies, ideological leanings, and records across different areas of law — from criminal procedure to civil rights to economic activity. At the same time, certain case types consistently produce more divided Courts than others. This project asks whether those patterns are strong enough that a classifier can learn them: given a justice's identity and the category of a case, can the model predict whether they will vote with the majority, dissent, or take some other position?
+        </p>
+        <p>
+          Understanding judicial voting patterns has real implications for legal strategy, policy advocacy, and democratic accountability. It also raises important questions about what it means to predict human judgment with an algorithm.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-1">
+        <h3>Data Description</h3>
+        <p>
+          This project uses the Supreme Court Database (SCDB), version 2025_01, justice-centered and organized by legal provision. The SCDB is maintained by Harold J. Spaeth and colleagues and is one of the most comprehensive datasets on U.S. Supreme Court decisions, spanning cases from 1946 to the present term.
+        </p>
+        <p>
+          The full dataset contains 124,797 rows, where each row represents a single justice's vote on a single case. There are 61 columns covering case identifiers, citation information, dates, case characteristics, issue classifications, and justice-level voting data. The target variable for this project is <code>vote</code>, which takes values 1 through 8 — where 1 indicates a vote with the majority, 2 indicates a dissent, and values 3–8 represent concurrences, judgments, and other specialized vote types.
+        </p>
+        <p>
+          The key predictive features retained for modeling were <code>justice</code> (numeric ID), <code>justiceName</code> (string, encoded to integer), and <code>issueArea</code> (one of 14 broad legal categories such as Criminal Procedure, Civil Rights, and First Amendment), supplemented by case-level context variables including <code>decisionDirection</code>, <code>lcDisposition</code>, <code>certReason</code>, <code>jurisdiction</code>, <code>partyWinning</code>, <code>majVotes</code>, <code>minVotes</code>, and <code>decisionType</code>.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-2">
+        <h3>Data Cleaning &amp; Preparation</h3>
+        <p>
+          Of the 61 original columns, only 13 were retained for modeling. Columns removed included all case identifiers (IDs, docket numbers, citation strings), free-text fields, date columns, and post-decision variables that would leak outcome information into the features. The remaining columns were selected because they are plausibly available at or before decision time.
+        </p>
+        <p>
+          3,451 rows were missing the <code>vote</code> target variable and were dropped, leaving 121,346 usable rows. The string column <code>justiceName</code> was encoded to an integer using <code>pd.factorize()</code>. Remaining missing values in feature columns — the largest being <code>lcDisposition</code> with 20,371 nulls — were filled using column medians rather than dropping rows, to preserve as much data as possible.
+        </p>
+        <p>
+          The vote distribution is heavily imbalanced: vote=1 accounts for 85,734 rows (~71%), vote=2 for 22,513 (~19%), and all other vote types combined for the remaining ~10%. This imbalance is the central challenge for all three models.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-3">
+        <h3>Modeling Approach</h3>
+        <p>
+          Three classifiers were trained and compared, each representing a different algorithmic family:
+        </p>
+        <h4>Decision Tree</h4>
+        <p>
+          A single decision tree with <code>max_depth=10</code> and <code>min_samples_leaf=20</code> to prevent overfitting. Decision trees are fully interpretable — the top three levels can be visualized to understand what splits the model makes first. This model serves as the transparent baseline.
+        </p>
+        <h4>Random Forest</h4>
+        <p>
+          An ensemble of 100 decision trees (<code>n_estimators=100</code>), using the same depth and leaf constraints. By aggregating predictions across many trees trained on random subsets of the data, random forests reduce the variance that makes a single tree unstable. This model is expected to be the most accurate but least interpretable.
+        </p>
+        <h4>K-Nearest Neighbors (KNN)</h4>
+        <p>
+          A distance-based classifier with <code>k=9</code> neighbors. Because KNN is sensitive to feature scale, the input features were standardized with <code>StandardScaler</code> before fitting. In cross-validation, the scaler was wrapped inside a <code>Pipeline</code> so that it is fit only on training folds, preventing data leakage. KNN makes predictions based on the similarity of a case-justice pair to historical examples, making it a fundamentally different approach from the tree-based models.
+        </p>
+        <p>
+          All models were evaluated on an 80/20 train-test split (stratified by random seed 42) and validated further with 5-fold cross-validation.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-4">
+        <h3>Results</h3>
+        <h4>Accuracy &amp; Weighted Metrics</h4>
+        <p>
+          All three models achieved similar test-set accuracy in the range of 75–76%. However, the gap between weighted F1 (~0.70) and macro F1 (~0.29–0.43) reveals that this accuracy is largely driven by correct predictions on the dominant vote=1 class. A model that predicted "majority" for every case would achieve roughly 71% accuracy — so the models are adding only about 4–5 percentage points above that naive baseline.
+        </p>
+        <h4>Per-Class Performance</h4>
+        <p>
+          Vote=1 was predicted well by all three models (recall of 92–98%). Vote=2 (dissent) was the hardest meaningful class: the best recall achieved was 43% (Decision Tree and KNN), while Random Forest only caught 30% of dissents. For rarer vote types (3–7), Random Forest scored 0% recall on most classes, effectively never predicting them. KNN performed the best on minority classes — achieving 12% recall on vote=3, 15% on vote=4 — and had the highest macro F1 (0.4275), meaning it was the most balanced across all vote types. Vote=8 was predicted with near-perfect accuracy by all three models, suggesting it has a very distinctive feature signature.
+        </p>
+        <h4>Cross-Validation</h4>
+        <p>
+          5-fold CV confirmed Random Forest as the most stable model (accuracy 72.44% ± 1.62%), followed by Decision Tree (71.78% ± 2.69%) and KNN (67.84% ± 2.84%). KNN's larger drop from single-split to CV accuracy suggests it benefited somewhat from the particular 80/20 split used in the main evaluation.
+        </p>
+        <div class="info-box amber">
+          The class imbalance in the SCDB — where majority votes outnumber all other types roughly 7:1 — is the binding constraint on all three models. Addressing it through techniques such as <code>class_weight='balanced'</code> or SMOTE oversampling would be the most impactful next step for improving predictions on dissents and concurrences.
+        </div>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-5">
+        <h3>Ethics &amp; Reflection</h3>
+        <p>
+          Predicting judicial votes raises meaningful ethical concerns beyond model performance. Judges are people, not data points, and reducing a justice's decision to a predicted output based on their identity and a case category risks flattening the complexity of legal reasoning into a statistical pattern. The model does not know what arguments were made, how briefs were written, or what values a justice weighed — it only knows who voted how in the past.
+        </p>
+        <p>
+          There is also a risk of self-fulfilling inference: if litigants or advocates use predictive tools to select which arguments to make or which courts to pursue, model predictions could subtly shape the very outcomes they claim to merely forecast. This feedback loop is especially concerning when the model disproportionately fails minority vote classes, meaning it is most uncertain precisely in the cases that deviate from norm.
+        </p>
+        <p>
+          The heavy class imbalance in this dataset is itself a reflection of how the Court works — the majority of cases produce large majorities. A model trained primarily on those cases will learn to reproduce consensus, not disagreement. Whether that is a technical limitation or a substantive finding is a question worth holding carefully.
+        </p>
+        <p>
+          In terms of transparency: all features used are public record, all modeling choices are documented in the code, and no personally identifying information beyond publicly available judicial records was used. The SCDB is a widely cited and peer-reviewed academic resource.
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-6">
+        <h3>Code</h3>
+        <p>The code for this project is available here:
+          <a href="SCDB_Vote_Prediction.html">View Code</a>
+        </p>
+      </div>
+
+      <div class="tab-panel" id="scdb-tab-7">
+        <h3>References &amp; AI Transparency</h3>
+        <p>
+          Spaeth, H., Epstein, L., Martin, A. D., Segal, J., Ruger, T., &amp; Benesh, S. (2025). <em>Supreme Court Database, Version 2025_01</em> [Dataset]. http://supremecourtdatabase.org
+        </p>
+        <p>
+          Breiman, L. (2001). Random forests. <em>Machine Learning, 45</em>(1), 5–32.
+        </p>
+        <p>
+          Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. <em>Journal of Machine Learning Research, 12</em>, 2825–2830.
+        </p>
+        <p>
+          Portions of the code used for data cleaning, modeling, and visualization were generated with assistance from Claude (Anthropic, 2026). All generated code was reviewed, tested, and modified by the author.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+function openProject(id) {
+  var el = document.getElementById('modal-' + id);
+  if (!el) return;
+  el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  el.querySelectorAll('.tab-panel').forEach(function(p,i){ p.classList.toggle('active', i===0); });
+  el.querySelectorAll('.tab-btn').forEach(function(b,i){ b.classList.toggle('active', i===0); });
+  el.querySelector('.proj-modal-body').scrollTop = 0;
+}
+function closeProject(id) {
+  var el = document.getElementById('modal-' + id);
+  if (!el) return;
+  el.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleBackdropClick(e, id) {
+  if (e.target === e.currentTarget) closeProject(id);
+}
+function switchTab(projectId, index, btn) {
+  var modal = document.getElementById('modal-' + projectId);
+  if (!modal) return;
+  modal.querySelectorAll('.tab-panel').forEach(function(p,i){ p.classList.toggle('active', i===index); });
+  modal.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  modal.querySelector('.proj-modal-body').scrollTop = 0;
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.proj-modal-backdrop.open').forEach(function(el){
+      closeProject(el.id.replace('modal-', ''));
+    });
+  }
+});
+</script>
+
+    <section id="blog" class="card">
+      <h2>Blog</h2>
+
+      <article class="post">
+        <header>
+          <h3>Introductory Reflection: Why study data science in social and interdisciplinary contexts?</h3>
+          <p class="post-meta">Published Jan, 2026 — by Carly C.</p>
+        </header>
+
+        <p>
+          Learning data science in social and interdisciplinary contexts matters to me because the
+          questions we choose to model and the ways we interpret results shape real-world
+          outcomes. Modeling social topics and people is not the same as modeling machines or
+          physical sensors. Models about people can have many different meanings and aspects of life 
+          that lead to the data. Understanding those meanings can help avoid misinterpretation of 
+          data and people.
+        </p>
+
+        <p>
+          One reason to model social topics is to create better-informed decisions. Thoughtful
+          analysis can reveal patterns or disparities that support more equitable policies,
+          resource allocation, or service design. But modeling also brings risks: simplified
+          models can reify stereotypes. For that reason, technical skill must be paired with
+          ethical reflection and engagement with domain experts and affected communities.
+        </p>
+
+        <p>
+          At this point, some responsibilities that come to mind include protecting privacy,
+          avoiding overclaiming what analyses show, and acknowledging uncertainty, especially 
+          within social groups. There is a duty to document data origins, limitations, choices 
+          made in cleaning and modeling, and mistakes along the road. Researchers and practitioners 
+          should consider who are the stakeholders at the end of day and who might be harmed by 
+          possible generalization of data. Openness about methods and sensitivity to consent and 
+          context are practical and required steps toward responsible work.
+        </p>
+
+        <p>
+          Through this course I hope to better understand practical ways to combine
+          quantitative methods with qualitative insight. I hope to look at data in a   
+          more human way: a way models can't. I want to get better at coding and feeling  
+          confident in my decisions with data analysis.
+        
+        </p>
+      </article>
+
+            <article class="post">
+        <header>
+          <h3>An Analysis of the Social Determinants of Health and the Capabilities Approach</h3>
+          <p class="post-meta">Published Feb, 2026 — by Carly C.</p>
+        </header>
+
+        <p>
+          The Social Determinants of Health are economic stability, healthcare access and quality, education access and quality, social and community context, and neighborhood and built environment.
+        </p>
+
+        <p>
+          Economic stability is a determinant of health as the foundation to being able to steadily afford things like housing and healthcare. If someone is working a minimum wage job and cannot afford housing in their city, and does not receive healthcare through their work or any other agency, it can lower their other determinants of health. Healthcare access and the quality of that access can also determine the quality of someone’s health by affordable access to medical care and medications. If someone does not have healthcare and gets a virus that needs antibiotics, but cannot afford a trip to the doctor, along with the cost of the medication, they will likely suffer for longer and be out of work for longer. Education access and the quality of that access is one of the more social parts of the determinants of health, as higher levels of education quality and years tend to increase the other factors of health. For example, a student who had affordable access to college went on to get a well-paying job, which led them to afford healthcare and a neighborhood with less crime. Their health will be better than someone who did not have access to that job because they did not have that same education. Social and community contexts affect an individual’s health through the quality of the social life with their family and friends. Someone who doesn’t engage much with their community and loved ones, could have a higher chance at developing depression and anxiety, thereby affecting their other quality of determinants of health. Neighborhood and built environment are health determinants since there are things like the quality of the air, the quality of the water, and crime rates that can affect an individual. In Flint, Michigan, there was an ongoing battle with the state to fix the quality of the water that had harmful effects on the individuals in that town, and added an extra burden of cost and living to avoid. 
+
+        </p>
+
+        <p>
+          The Capabilities Approach is a way of determining well-being by more than just access to resources and income, but by what individuals are capable of doing. These capabilities are often freedoms to do and act as someone pleases in regards to their life, bodily health, and education. Someone should have the freedom to choose what food they would eat, whether it is healthier or not. 
+        </p>
+
+      </article>
+    </section>
+
+    <section id="contact" class="card">
+      <h2>Contact</h2>
+      <ul class="meta">
+        <li>Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="20434341535449111660434841524c4f5454450e454455">[email&#160;protected]</a></li>
+        
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div c

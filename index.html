@@ -382,7 +382,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
           This project uses the Supreme Court Database (SCDB), version 2025_01, justice-centered and organized by legal provision. The SCDB is maintained by Harold J. Spaeth and colleagues and is one of the most comprehensive datasets on U.S. Supreme Court decisions, spanning cases from 1946 to the present term.
         </p>
         <p>
-          The full dataset contains 124,797 rows, where each row represents a single justice's vote on a single case. There are 61 columns covering case identifiers, citation information, dates, case characteristics, issue classifications, and justice-level voting data. The target variable for this project is <code>vote</code>, which takes values 1 through 8 — where 1 indicates a vote with the majority, 2 indicates a dissent, and values 3–8 represent concurrences, judgments, and other specialized vote types.
+          The full dataset contains 124,797 rows, where each row represents a single justice's vote on a single case. There are 61 columns covering case identifiers, citation information, dates, case characteristics, issue classifications, and justice-level voting data. The target variable for this project is <code>vote</code>, which takes values 1 through 8. 1 indicates a vote with the majority, 2 indicates a dissent, and values 3–8 represent concurrences, judgments, and other specialized vote types.
         </p>
         <p>
           The key predictive features retained for modeling were <code>justice</code> (numeric ID), <code>justiceName</code> (string, encoded to integer), and <code>issueArea</code> (one of 14 broad legal categories such as Criminal Procedure, Civil Rights, and First Amendment), supplemented by case-level context variables including <code>decisionDirection</code>, <code>lcDisposition</code>, <code>certReason</code>, <code>jurisdiction</code>, <code>partyWinning</code>, <code>majVotes</code>, <code>minVotes</code>, and <code>decisionType</code>.
@@ -392,10 +392,10 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
       <div class="tab-panel" id="scdb-tab-2">
         <h3>Data Cleaning &amp; Preparation</h3>
         <p>
-          Of the 61 original columns, only 13 were retained for modeling. Columns removed included all case identifiers (IDs, docket numbers, citation strings), free-text fields, date columns, and post-decision variables that would leak outcome information into the features. The remaining columns were selected because they are plausibly available at or before decision time.
+          Of the 61 original columns, only 13 were retained for modeling. Columns removed included all case identifiers (IDs, docket numbers, citation strings), free-text fields, date columns, and post-decision variables that would leak outcome information into the features. The remaining columns were selected because they are likely available at or before decision time.
         </p>
         <p>
-          3,451 rows were missing the <code>vote</code> target variable and were dropped, leaving 121,346 usable rows. The string column <code>justiceName</code> was encoded to an integer using <code>pd.factorize()</code>. Remaining missing values in feature columns — the largest being <code>lcDisposition</code> with 20,371 nulls — were filled using column medians rather than dropping rows, to preserve as much data as possible.
+          3,451 rows were missing the <code>vote</code> target variable and were dropped, leaving 121,346 usable rows. The string column <code>justiceName</code> was encoded to an integer using <code>pd.factorize()</code>. The remaining missing values in feature columns were filled using column medians rather than dropping rows, with the goal of preserving as much data as possible.
         </p>
         <p>
           The vote distribution is heavily imbalanced: vote=1 accounts for 85,734 rows (~71%), vote=2 for 22,513 (~19%), and all other vote types combined for the remaining ~10%. This imbalance is the central challenge for all three models.
@@ -410,7 +410,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
         <h4>Decision Tree</h4>
         <img src="Decision_Tree.png" alt="The Visualization of the Decision Tree Model" width="95%">
         <p>
-          A single decision tree with <code>max_depth=10</code> and <code>min_samples_leaf=20</code> to prevent overfitting. Decision trees are fully interpretable — the top three levels can be visualized to understand what splits the model makes first. This model serves as the transparent baseline.
+          A single decision tree with <code>max_depth=10</code> and <code>min_samples_leaf=20</code> to prevent overfitting. Decision trees are fully interpretable — the top three levels can be visualized to understand what splits the model makes first. This model is meant to serve as a baseline of comparison for future models.
         </p>
         <h4>Random Forest</h4>
         <p>
@@ -430,7 +430,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
         <h4>Accuracy &amp; Weighted Metrics</h4>
         <img src="Model_Comparison.png" alt="The Comparison of All Models for Accuracy Metrics." width="80%">
         <p>
-          All three models achieved similar test-set accuracy in the range of 75–76%. However, the gap between weighted F1 (~0.70) and macro F1 (~0.29–0.43) reveals that this accuracy is largely driven by correct predictions on the dominant vote=1 class. A model that predicted "majority" for every case would achieve roughly 71% accuracy — so the models are adding only about 4–5 percentage points above that naive baseline.
+          All three models achieved similar test-set accuracy in the range of 75–76%. However, the gap between weighted F1 (~0.70) and macro F1 (~0.29–0.43) reveals that this accuracy is largely driven by correct predictions on the dominant vote=1 class. A model that predicted "majority" for every case would achieve roughly 71% accuracy — so the models are adding only about 4–5 percentage points above that baseline.
         </p>
         <h4>Per-Class Performance</h4>
         <img src="Feature_Importance.png" alt="The Visualization of the Feature Performance." width="80%">

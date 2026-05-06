@@ -889,6 +889,7 @@ avail_morning  avail_afternoon  avail_evening  avail_latenight</code></pre>
       <div class="tab-panel" id="techreport-tab-3">
   <h3>Models &amp; Methodology</h3>
   <p>The end-to-end methodology is summarized below. Raw survey responses pass through the 9-step preprocessing pipeline (Section 3) and are split into two feature sets (compatibility and complementarity). Three models operate on the compatibility set; one model operates on the complementarity set. All four are evaluated on the same six metrics (Section 5), and the ranked configurations are passed to the instructor for final review.</p>
+  <img src="pipeline_diagram.png" alt="The Pipeline Diagram" width="95%">
   <h4>Why Four Models?</h4>
   <p>No single clustering algorithm naturally handles both matching objectives. The chosen four span the design space:</p>
   <ul>
@@ -955,6 +956,7 @@ avail_morning  avail_afternoon  avail_evening  avail_latenight</code></pre>
   <h4>Ambiguity Flagging — Mechanism and Empirical Result</h4>
   <p>Students with max_j γᵢⱼ &lt; 0.60 are flagged as <em>ambiguous</em> in the output. This is a conservative threshold — it surfaces students for instructor review rather than letting the algorithm decide.</p>
   <p><strong>Empirical result on this cohort.</strong> With N = 31, k = 8 (selected by BIC), and full covariance matrices, GMM converges to extremely sharp posterior distributions. The maximum component probability is ≥ 0.999 for every single student in the cohort.</p>
+  <img src="gmm_ambiguity.png" alt="The GMM Visualization" width="95%">
   <ul>
     <li>min(max_j γᵢⱼ): ≈ 1.00</li>
     <li>median(max_j γᵢⱼ): ≈ 1.00</li>
@@ -978,6 +980,7 @@ avail_morning  avail_afternoon  avail_evening  avail_latenight</code></pre>
           <li><strong>Hungarian Assignment:</strong> Team sizes <strong>3–6</strong> | Silhouette 0.0430 | Davies-Bouldin 1.7732 | Calinski-Harabasz 2.7089 | Skill Variance 0.2125 | Schedule Overlap 0.6069 | Skill Coverage <strong>7.875</strong></li>
           <li><strong>GMM:</strong> Team sizes 3–6 | Silhouette <strong>0.1502</strong> | Davies-Bouldin <strong>1.3610</strong> | Calinski-Harabasz <strong>6.3377</strong> | Skill Variance 0.1359 | Schedule Overlap 0.4845 | Skill Coverage 6.75</li>
         </ul>
+        <img src="comparison_metrics.png" alt="Comparison Metrics Visualization" width="95%">
         <h4>Interpretation</h4>
         <p><strong>Silhouette scores are low (0.04–0.15).</strong> This is expected given N = 31 partitioned into k = 8 groups in a ~29-dimensional feature space — there simply aren't enough points per cluster for tight separation. The absolute values are not the story; the <strong>relative ordering</strong> across models is what matters. Crucially, silhouette is positive for all four models, confirming that there <em>is</em> cluster structure in the data.</p>
         <p><strong>GMM wins on all three algorithmic metrics.</strong> This is intuitively sensible: GMM operates on a lower-dimensional (8-feature) space where clusters have more room to separate, and it can express elliptical cluster shapes via full covariance matrices.</p>
@@ -1003,6 +1006,7 @@ avail_morning  avail_afternoon  avail_evening  avail_latenight</code></pre>
           <li>14 components required to reach 90%</li>
         </ul>
         <p>The dataset is high-dimensional relative to N = 31 (37 features), so no small number of components captures a dominant share of variance. PC1 + PC2 together explain 29.26% — enough for a meaningful 2-D biplot, but the remaining ~70% of variance is distributed across many weakly-correlated directions, consistent with a survey where no handful of items dominates student differentiation.</p>
+        <img src="pca_biplot (1).png" alt="The PCA Biplot" width="95%">
         <h4>PC1 — Primary Axis of Differentiation (15.8% of variance)</h4>
         <p>Top features on PC1: <code>avail_sat</code> (+0.378), <code>avail_sun</code> (+0.378), <code>avail_tue</code> (+0.370), <code>avail_thu</code> (+0.333), <code>avail_mon</code> (−0.255), <code>avail_latenight</code> (+0.235).</p>
         <p>PC1 is overwhelmingly a <strong>day-of-week availability axis</strong>. The positive direction loads on weekend + Tue/Thu availability; the negative direction loads on Monday. PC1 separates students who are available on non-standard schedules from students anchored to Monday-centered availability.</p>

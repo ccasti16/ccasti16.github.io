@@ -515,6 +515,146 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
     </div>
   </div>
 </div>
+
+<div class="proj-modal-backdrop" id="modal-birds" role="dialog"
+     aria-modal="true" aria-labelledby="birds-title"
+     onclick="handleBackdropClick(event,'birds')">
+  <div class="proj-modal">
+
+    <div class="proj-modal-header">
+      <div class="modal-tags">
+        <span class="modal-tag">Machine Learning</span>
+        <span class="modal-tag">Education</span>
+        <span class="modal-tag">Social Justice</span>
+      </div>
+      <h2 id="birds-title">Project 3: Birds of a Feather — Who Picks Your Team? Building a Fairer Way to Form Student Project Groups</h2>
+      <button class="proj-modal-close" onclick="closeProject('birds')" aria-label="Close">✕</button>
+    </div>
+
+    <nav class="proj-modal-tabs">
+      <button class="tab-btn active" onclick="switchTab('birds',0,this)">The moment everyone dreads</button>
+      <button class="tab-btn"        onclick="switchTab('birds',1,this)">Why this matters</button>
+      <button class="tab-btn"        onclick="switchTab('birds',2,this)">Three questions, one project</button>
+      <button class="tab-btn"        onclick="switchTab('birds',3,this)">How we built it</button>
+      <button class="tab-btn"        onclick="switchTab('birds',4,this)">What we found</button>
+      <button class="tab-btn"        onclick="switchTab('birds',5,this)">The ethics, named explicitly</button>
+      <button class="tab-btn"        onclick="switchTab('birds',6,this)">Human in the loop, on purpose</button>
+      <button class="tab-btn"        onclick="switchTab('birds',7,this)">What we'd do next</button>
+      <button class="tab-btn"        onclick="switchTab('birds',8,this)">A small claim</button>
+      <button class="tab-btn"        onclick="switchTab('birds',9,this)">References</button>
+      <button class="tab-btn"        onclick="switchTab('birds',10,this)">Tools &amp; Acknowledgments</button>
+    </nav>
+
+    <div class="proj-modal-body">
+
+      <div class="tab-panel active" id="birds-tab-0">
+        <h3>The moment everyone dreads</h3>
+        <p>There is a small, predictable silence in every college classroom when an instructor says the words <em>"For this next project, you'll be in groups of four."</em> Some students immediately turn to the friends they came in with. Others freeze, hoping the instructor will assign teams so they don't have to navigate the social cost of asking strangers. A few quietly recalculate the rest of their semester — <em>who is going to do the work? who has my schedule? who's going to ghost the group chat?</em></p>
+        <p>Group projects are everywhere in higher education, and yet the way teams get formed has barely changed in decades. Instructors typically choose between two options: let students pick (which reproduces existing social cliques and excludes newcomers), or assign randomly (which ignores the very things that determine whether a team functions — schedule, skill mix, work style). Neither option is satisfying, and neither scales well to a class of 30 students juggling jobs, commutes, and conflicting deadlines.</p>
+        <p>So we asked the obvious question: <strong>could a data-driven approach do better?</strong></p>
+        <p>That question turned into the <em>Teammate Matcher</em> — a recommendation tool, not an autonomous decision-maker, that uses machine learning to surface team configurations an instructor can review and adjust.</p>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-1">
+        <h3>Why this matters beyond a class assignment</h3>
+        <p>It is tempting to file "team formation" under <em>minor logistical headache</em>, but the choice of who works with whom is pedagogically consequential. Group composition shapes who learns from whom, who gets credit, who carries silent labor, and — at the limit — who passes a course (Kyprianidou et al., 2012). When those decisions are made by algorithm rather than by hand, the same set of questions that animates broader debates about AI in high-stakes domains shows up in miniature: Whose values are encoded in the model? Whose data does it use, and with what consent? Can the people affected by it understand what it's doing? (O'Neil, 2016; Akgun &amp; Greenhow, 2022)</p>
+        <p>Higher education has spent the last decade quietly importing data-driven decision systems — early-warning dashboards, automated tutoring placements, "engagement" analytics drawn from learning-management click streams. Most of these systems run without the consent of the students they classify and without the affected instructors fully understanding how they work. We wanted to take the opposite approach: build something narrow, transparent, opt-in, and explicitly designed to keep the instructor in charge.</p>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-2">
+        <h3>Three questions, one project</h3>
+        <p>Our work was guided by three research questions:</p>
+        <ol>
+          <li><strong>How can we represent students' skills, availability, and work styles using direct self-report — and is that data rich enough to drive useful matches?</strong></li>
+          <li><strong>Which clustering or optimization algorithms produce the most balanced teams — and does the answer change when we optimize for <em>similar</em> teams versus <em>complementary</em> ones?</strong></li>
+          <li><strong>Which student attributes actually drive cluster separation? In other words, what is the algorithm really listening to?</strong></li>
+        </ol>
+        <p>The third question is the most important one for understanding what the algorithm <em>means.</em> A model that produces good-looking teams but listens primarily to GPA, or to one cultural style of self-presentation, has different ethical implications than one that listens primarily to schedule overlap. Knowing which features dominate is not optional — it is the audit.</p>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-3">
+        <h3>How we built it</h3>
+        <p>We deployed an anonymous Google Forms survey to 31 students in a single section of DTSC 2302. The survey collected 35 items across five domains: schedule and availability, technical skills (8 dimensions, self-rated 1–5), work style, communication preferences, and a self-assessment block. After preprocessing — checkbox expansion, ordinal encoding, one-hot encoding, Min-Max normalization, and a privacy-preserving row shuffle — we ended up with 50 features per student and zero missing values.</p>
+        <p>We then ran four different models on the cleaned data, deliberately chosen to span the design space:</p>
+        <ul>
+          <li><strong>K-Means clustering</strong> — the standard workhorse, fast and interpretable, but it cannot enforce balanced team sizes.</li>
+          <li><strong>Agglomerative (Ward) clustering</strong> — a hierarchical alternative that produces a dendrogram for instructor inspection and makes no spherical-cluster assumption.</li>
+          <li><strong>Hungarian Algorithm assignment</strong> — a combinatorial optimization technique from operations research (Kuhn, 1955), used to enforce that every team contains exactly 3–6 students, a property no standard clustering algorithm guarantees.</li>
+          <li><strong>Gaussian Mixture Model (GMM)</strong> — a probabilistic model that produces <em>soft</em> assignments instead of hard cluster labels (Bishop, 2006), letting us flag ambiguous students for human review.</li>
+        </ul>
+        <p>The first three models were applied to a <em>similarity</em> feature set (availability + work style). GMM was applied to a <em>complementarity</em> feature set (skills only). We evaluated all four models on six metrics: three algorithmic (Silhouette Score, Davies–Bouldin, Calinski–Harabasz) and three domain-specific (intra-team skill variance, schedule overlap via Jaccard similarity, and skill coverage).</p>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-4">
+        <h3>What we found</h3>
+        <h4>1. The Hungarian Algorithm is the model we'd actually deploy</h4>
+        <p>It is the only one of the four that guaranteed every team contained between three and six students — the other models routinely produced oversized teams (one K-Means cluster contained 10 students) or two-person teams too small to cover the project's required skills. It also tied for the highest skill coverage (7.875 out of 8 skill dimensions per team). Its silhouette score is the lowest of the four, which is the explicit cost of forcing balanced sizes — but for a deployment context, balanced and slightly-less-tight is far more useful than tight-but-unusable.</p>
+        <h4>2. Schedule, not skill, is what separates students</h4>
+        <p>When we ran Principal Component Analysis on the full feature set, the first principal component (15.8% of variance) was dominated by day-of-week availability — weekend, Tuesday, and Thursday loadings positive; Monday loading negative. The second component (13.5%) was conflict-handling and meeting-mode preferences. <strong>Self-rated skill features did not appear in the top loadings until the third principal component.</strong></p>
+        <p>Within this cohort, students differentiate primarily on <em>when they can meet</em> and <em>how they handle conflict</em> — not on what they say they're good at. An algorithm that spends its energy matching on skills will have very little signal to work with.</p>
+        <h4>3. GPA is not a neutral feature</h4>
+        <p>We ran K-Means with and without <code>gpa_band</code> and compared resulting cluster labels using the Adjusted Rand Index. The score was <strong>0.34</strong> — moderately low. Removing GPA actually <em>improved</em> the schedule-overlap metric slightly (0.628 versus 0.604). GPA was actively pulling the clustering away from its primary objective.</p>
+        <h4>4. GMM produced sharp, not soft, archetypes</h4>
+        <p>Every one of the 31 students locked tightly onto exactly one of the eight latent skill archetypes with probability ≈ 1.0. Zero students were flagged as ambiguous. This is not a failure of the algorithm — it is a property of the data. In a larger sample the ambiguity-flag mechanism would be exercised meaningfully; in this run, it had nothing to surface.</p>
+        <div class="info-box amber">
+          The uneven availability across the cohort — weekday afternoons dense, weekends and late-night sparse — is the binding constraint on all three similarity-based models. A larger or more temporally diverse sample would be the highest-value next step.
+        </div>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-5">
+        <h3>The ethics, named explicitly</h3>
+        <h4>Self-report bias is a fairness problem</h4>
+        <p>Students from cultures or backgrounds where confidence-expression is discouraged will systematically under-rate themselves on a 1-to-5 Likert scale (Akgun &amp; Greenhow, 2022). An algorithm that takes those self-ratings at face value will route those students into "low-skill" team slots. The Hungarian Algorithm's size-balancing constraint mitigates this by forcing mixed teams, and our skill-coverage metric specifically asks whether <em>anyone</em> on the team meets each threshold. But the underlying bias remains in the data — we can refuse to amplify it; we can't fix it.</p>
+        <h4>Algorithmic recommendations create anchoring pressure</h4>
+        <p>Even with explicit human-in-the-loop framing, an instructor presented with a confident-looking algorithmic output is more likely to accept it than to override it (Akgun &amp; Greenhow, 2022). To counter this, we deliberately produce <em>multiple</em> configurations rather than one, surface ambiguity flags from GMM, and present per-metric trade-offs rather than a single composite score. The point is to make scrutiny structurally easier than rubber-stamping.</p>
+        <h4>Anonymous data isn't always anonymous</h4>
+        <p>Our raw survey data was collected anonymously — no names, no emails, no student IDs. But the Google Forms export included an exact-second timestamp for each submission, and in a class of 31 students who know each other, <em>"who submitted at 11:30 AM on Wednesday"</em> can identify someone. We treat the timestamp as a quasi-identifier: the raw file stays local and is never published, and the processed file is row-shuffled with a fixed random seed before saving, breaking the correlation between row position and submission order. Reproducibility is preserved; re-identification is not.</p>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-6">
+        <h3>Human in the loop, on purpose</h3>
+        <p>The Teammate Matcher does not assign teams. It produces a set of candidate configurations with interpretable metrics — schedule overlap, skill coverage, ambiguity flags — and the instructor makes the final call. We made this choice deliberately, not as a hedge.</p>
+        <p>There are things the algorithm cannot see: known interpersonal conflicts, prior team history, accommodation needs, students currently navigating difficult life circumstances, the instructor's pedagogical intent for that particular project. An autonomous system that overrides these is not a better system — it is a brittle one. The right place for an algorithm in this problem is <em>upstream of the decision,</em> surfacing options and quantifying trade-offs, not making the call.</p>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-7">
+        <h3>What we'd do next</h3>
+        <p>The most important piece of future work is <em>validation</em>: we need to know whether algorithmically formed teams actually report less friction and produce better outcomes than randomly assigned ones. That requires a post-project survey on team satisfaction, ideally run across multiple sections. Until that data exists, we have shown only that the algorithm produces <em>plausibly good</em> teams by our chosen metrics — not that it produces <em>measurably better</em> teams in lived experience.</p>
+        <p>We also plan to implement the equity constraint we currently document but don't enforce: no team should be composed entirely of students who self-rate below threshold on any single skill dimension. And we want to compare Euclidean distance with Gower's similarity, which handles mixed binary/continuous data more cleanly than either does individually.</p>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-8">
+        <h3>A small claim</h3>
+        <p>We started this project asking whether a data-driven tool could replace instructor judgment in team formation. We finished it convinced that the right framing is the inverse: a data-driven tool can <em>protect</em> instructor judgment by surfacing the trade-offs that hand-assignment makes implicit. The model is a magnifying glass, not a verdict. That distinction is small, but it is the entire ethical difference between a recommendation system and an automation system, and it is the difference we tried to design for.</p>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-9">
+        <h3>References</h3>
+        <ul class="ref-list">
+          <li>Akgun, S., &amp; Greenhow, C. (2022). Artificial intelligence in education: Addressing ethical challenges in K-12 settings. <em>AI and Ethics</em>, <em>2</em>, 431–440. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8455229/" target="_blank">https://pmc.ncbi.nlm.nih.gov/articles/PMC8455229/</a></li>
+          <li>Bishop, C. M. (2006). <em>Pattern recognition and machine learning</em>. Springer.</li>
+          <li>Eubanks, V. (2018). <em>Automating inequality: How high-tech tools profile, police, and punish the poor</em>. St. Martin's Press.</li>
+          <li>Kuhn, H. W. (1955). The Hungarian method for the assignment problem. <em>Naval Research Logistics Quarterly</em>, <em>2</em>(1–2), 83–97. <a href="https://doi.org/10.1002/nav.3800020109" target="_blank">https://doi.org/10.1002/nav.3800020109</a></li>
+          <li>Kyprianidou, M., Demetriadis, S., Tsiatsos, T., &amp; Pombortsis, A. (2012). Group formation based on learning styles: Can it improve students' teamwork? <em>Educational Technology Research and Development</em>, <em>60</em>(1), 83–110. <a href="https://doi.org/10.1007/s11423-011-9215-4" target="_blank">https://doi.org/10.1007/s11423-011-9215-4</a></li>
+          <li>O'Neil, C. (2016). <em>Weapons of math destruction: How big data increases inequality and threatens democracy</em>. Crown.</li>
+          <li>Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., &amp; Duchesnay, E. (2011). Scikit-learn: Machine learning in Python. <em>Journal of Machine Learning Research</em>, <em>12</em>, 2825–2830.</li>
+          <li>Selbst, A. D., Boyd, D., Friedler, S. A., Venkatasubramanian, S., &amp; Vertesi, J. (2019). Fairness and abstraction in sociotechnical systems. In <em>Proceedings of the Conference on Fairness, Accountability, and Transparency</em> (pp. 59–68). <a href="https://doi.org/10.1145/3287560.3287598" target="_blank">https://doi.org/10.1145/3287560.3287598</a></li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" id="birds-tab-10">
+        <h3>Tools &amp; Acknowledgments</h3>
+        <h4>Tools</h4>
+        <p>Built in Python with scikit-learn (Pedregosa et al., 2011) for K-Means, Agglomerative, GMM, PCA, and evaluation metrics, and SciPy for the Hungarian Algorithm via <code>linear_sum_assignment</code>. Additional tools used: pandas, NumPy, matplotlib, and seaborn. Full source, preprocessing pipeline, model wrappers, evaluation code, and Jupyter notebooks are available at <a href="https://github.com/HPAuncc/teammate-matcher" target="_blank">github.com/HPAuncc/teammate-matcher</a>. Claude (Anthropic) was used as a coding assistant throughout development.</p>
+        <h4>Acknowledgments</h4>
+        <p>Special thanks to Aileen Benedict and Jordan Blekking (UNC Charlotte School of Data Science) for advising this project, and to the 31 anonymous DTSC 2302 students who took the survey.</p>
+        <h4>Co-authorship</h4>
+        <p><em>Co-authored with Hampton Abbott, DTSC 2302, University of North Carolina at Charlotte, Spring 2026.</em></p>
+      </div>
+
+    </div>
+  </div>
+</div>
     
 <script>
 function openProject(id) {

@@ -559,7 +559,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
         <span class="modal-tag">Education</span>
         <span class="modal-tag">Social Justice</span>
       </div>
-      <h2 id="birds-title">Project 3: Birds of a Feather — Who Picks Your Team? Building a Fairer Way to Form Student Project Groups</h2>
+      <h2 id="birds-title">Project 3 Portfolio Post: Birds of a Feather — Who Picks Your Team? Building a Fairer Way to Form Student Project Groups</h2>
       <button class="proj-modal-close" onclick="closeProject('birds')" aria-label="Close">✕</button>
     </div>
 
@@ -682,6 +682,269 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
         <p>Special thanks to Aileen Benedict and Jordan Blekking (UNC Charlotte School of Data Science) for advising this project, and to the 31 anonymous DTSC 2302 students who took the survey.</p>
         <h4>Co-authorship</h4>
         <p><em>Co-authored with Hampton Abbott, DTSC 2302, University of North Carolina at Charlotte, Spring 2026.</em></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="proj-modal-backdrop" id="modal-techreport" role="dialog"
+     aria-modal="true" aria-labelledby="techreport-title"
+     onclick="handleBackdropClick(event,'techreport')">
+  <div class="proj-modal">
+
+    <div class="proj-modal-header">
+      <div class="modal-tags">
+        <span class="modal-tag">Machine Learning</span>
+        <span class="modal-tag">Education</span>
+        <span class="modal-tag">Technical Report</span>
+      </div>
+      <h2 id="techreport-title">Project 3 Technical Report: Group Project Teammate Matcher</h2>
+      <button class="proj-modal-close" onclick="closeProject('techreport')" aria-label="Close">✕</button>
+    </div>
+
+    <nav class="proj-modal-tabs">
+      <button class="tab-btn active" onclick="switchTab('techreport',0,this)">Introduction &amp; RQs</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',1,this)">Dataset &amp; Survey Design</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',2,this)">Preprocessing Pipeline</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',3,this)">Models &amp; Methodology</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',4,this)">Evaluation Results</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',5,this)">Feature Importance via PCA</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',6,this)">Limitations &amp; Assumptions</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',7,this)">Ethics, Bias &amp; Equity</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',8,this)">Conclusion</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',9,this)">Code &amp; Reproducibility</button>
+      <button class="tab-btn"        onclick="switchTab('techreport',10,this)">References &amp; AI</button>
+    </nav>
+
+    <div class="proj-modal-body">
+
+      <div class="tab-panel active" id="techreport-tab-0">
+        <h3>Introduction &amp; Research Questions</h3>
+        <h4>Abstract</h4>
+        <p>Academic team formation in data science courses is typically left to random assignment or student self-selection, producing teams with scheduling conflicts, mismatched work styles, and uneven skill distribution. This report presents the <strong>Teammate Matcher</strong>, a data-driven application that optimizes academic team formation using four machine learning approaches: K-Means clustering, Agglomerative hierarchical clustering, size-constrained assignment via the <strong>Hungarian Algorithm</strong>, and <strong>Gaussian Mixture Models (GMM)</strong>.</p>
+        <p>Primary survey data were collected from 31 students in DTSC 2302, capturing availability, work style, communication preferences, and self-rated technical skills. Hungarian Assignment produced the most practically deployable configuration — balanced teams of 3–6 students with near-complete skill coverage (7.875/8 dimensions per team). Principal Component Analysis confirmed that availability and work-style are the primary axes of student differentiation (PC1 = day-of-week availability, 15.8%; PC2 = conflict/meeting style, 13.5%), with self-rated skills appearing only as a secondary axis from PC3 onward.</p>
+        <h4>Problem Statement</h4>
+        <p>The success of academic group projects depends heavily on team composition. Prior research has established that random assignment and student self-selection both produce suboptimal outcomes — including uneven distribution of work, scheduling conflicts, and mismatched work styles (Kyprianidou et al., 2012). The <strong>Teammate Matcher</strong> addresses this by developing an automated, data-driven recommendation system using directly measured student attributes collected via primary survey data.</p>
+        <h4>Research Questions</h4>
+        <ol>
+          <li><strong>RQ1.</strong> How can we quantify and represent student skills, availability, and work styles using direct self-report to facilitate effective team matching?</li>
+          <li><strong>RQ2.</strong> Which clustering or optimization algorithms produce the most balanced and compatible student teams — and does the answer differ when optimizing for <em>similar</em> teams versus <em>complementary</em> teams?</li>
+          <li><strong>RQ3.</strong> What student attributes are most predictive of cluster separation, and which features contribute most to team differentiation?</li>
+        </ol>
+        <h4>Societal Relevance</h4>
+        <p>Team assignment is not a neutral algorithmic problem. Choices in feature selection, normalization, and model objective carry equity implications: skill diversity without constraint could isolate lower-confidence students onto a single team; schedule homogeneity could inadvertently group students by implicit socioeconomic factors; and self-reported skills are subject to social desirability bias. These concerns are revisited in the Ethics section.</p>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-1">
+        <h3>Dataset &amp; Survey Design</h3>
+        <h4>Why Primary Data Collection?</h4>
+        <p>No public dataset contains the information needed for this problem. Team formation requires direct measurement of schedule availability, self-rated skills across multiple dimensions, work style and conflict approach, and communication channel preferences — none of which are captured in existing educational datasets. We therefore designed and deployed an <strong>anonymous student survey</strong> in DTSC 2302, collecting primary data directly from the population the model is intended to serve.</p>
+        <h4>Survey Instrument</h4>
+        <p>The survey was deployed via Google Forms and organized into five sections:</p>
+        <ul>
+          <li><strong>Section 1 — Context:</strong> Course code, year in school.</li>
+          <li><strong>Section 2 — Schedule &amp; Availability:</strong> Days (checkbox), time slots (checkbox), weekly hours, meeting mode.</li>
+          <li><strong>Section 3 — Technical Skills:</strong> 8 items, Likert 1–5.</li>
+          <li><strong>Section 4 — Work Style:</strong> Role, deadline approach, communication, check-in frequency, collaboration style, detail focus, conflict style.</li>
+          <li><strong>Section 5 — Self-Assessment:</strong> GPA band (optional), top contributions, biggest pain point.</li>
+        </ul>
+        <p>Ordinal Likert was used for skills to capture relative confidence without forcing binary self-categorization. Checkbox multi-select for schedule allows expression of disjoint availability. GPA was collected optionally with an explicit "Prefer not to say" option to reduce response pressure.</p>
+        <h4>Dataset Characteristics</h4>
+        <ul>
+          <li>Responses collected: 31</li>
+          <li>Raw CSV columns: 27 (includes 2 empty Google Forms artifacts)</li>
+          <li>Features after preprocessing: 50</li>
+          <li>Missing values: 2 (both GPA)</li>
+          <li>Year distribution: Juniors 13, Sophomores 11, Freshmen 4, Graduate 2, Senior 1</li>
+        </ul>
+        <h4>Anonymity &amp; Quasi-Identifier Analysis</h4>
+        <p>The survey promised anonymity. The raw CSV contains a <code>Timestamp</code> column (exact submission time to the second) which is a quasi-identifier in a class of 31 students who know each other. Two protective measures address this: (1) the raw CSV is excluded from the public repository via <code>.gitignore</code>; (2) the processed CSV is row-shuffled before saving (<code>random_state=42</code>), eliminating the correlation between row position and submission order.</p>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-2">
+        <h3>Preprocessing Pipeline</h3>
+        <p>The preprocessing pipeline (<code>src/preprocess.py</code>) implements nine sequential steps:</p>
+        <h4>Step 1 — Load Raw CSV</h4>
+        <p>Raw Google Forms export is read with default pandas CSV parsing. No modifications to the on-disk file — the raw artifact is preserved in case preprocessing needs to be re-audited.</p>
+        <h4>Step 2 — Column Cleaning &amp; Artifact Removal</h4>
+        <p>Rename 25 verbose Google Forms question strings to short internal names, drop two empty artifact columns, drop the <code>Timestamp</code> column (privacy), and normalize <code>course_code</code> to <code>"DTSC 2302"</code> (11 free-text variants in the raw data).</p>
+        <h4>Step 3 — Availability Encoding (Checkbox Expansion)</h4>
+        <p>Expand comma-separated <code>_days_raw</code> and <code>_times_raw</code> strings into 11 binary columns: <code>avail_mon</code> through <code>avail_sun</code> plus <code>avail_morning</code>, <code>avail_afternoon</code>, <code>avail_evening</code>, <code>avail_latenight</code>. This enables Jaccard similarity comparisons between any two students' availability vectors.</p>
+        <h4>Step 4 — Ordinal Encoding</h4>
+        <p>Map ordered categorical responses to integers preserving their natural ordering (e.g., <code>year</code>: Freshman=1 → Graduate=5; <code>deadline_style</code>: Last-minute=1 → Early=3). Adjacent categories are assumed equidistant — a trade-off accepted because Min-Max normalization projects all ordinals to [0,1] where absolute distances matter only in relative terms.</p>
+        <h4>Step 5 — One-Hot Encoding</h4>
+        <p>Expand four nominal (unordered) variables into binary indicator columns: <code>meeting_mode</code>, <code>comm_pref</code>, <code>conflict_style</code>, and <code>pain_point</code>. Ordinal encoding would inject a spurious distance metric for these unordered categories.</p>
+        <h4>Step 6 — Contribution Multi-Select Encoding</h4>
+        <p>Expand <code>_contrib_raw</code> into six independent binary columns: <code>contrib_technical</code>, <code>contrib_creative</code>, <code>contrib_organization</code>, <code>contrib_writing</code>, <code>contrib_morale</code>, <code>contrib_qa</code>. Over-selection (selecting more than the suggested 2) was not truncated — it carries information about how multi-faceted a student sees themselves.</p>
+        <h4>Step 7 — Missing Value Handling</h4>
+        <p>Both missing GPA values (1 genuine skip, 1 "Prefer not to say") are imputed with the <strong>median</strong> ordinal band (median = 4, "3.5–4.0"). Mean imputation was rejected because it could produce non-integer values that don't correspond to a valid response band.</p>
+        <h4>Step 8 — Min-Max Normalization</h4>
+        <p>Scale all non-binary numeric features to [0,1]. Without normalization, skill ratings (range 1–5) would contribute up to 16× more per feature to Euclidean distance than binary availability features (range 0–1), effectively ignoring schedule compatibility. Binary features already in {0,1} are not re-scaled.</p>
+        <h4>Step 9 — Row Shuffle &amp; Save</h4>
+        <p>After all encoding, row order is shuffled (<code>sample(frac=1, random_state=42)</code>) before saving. This is a privacy protection, not a modeling step — it breaks the correlation between row position and submission order while keeping the pipeline fully reproducible.</p>
+        <h4>Feature Set Construction</h4>
+        <p>Two feature sets are returned for the two research objectives: <strong>compatibility</strong> (29 features — availability + work-style, used by K-Means, Agglomerative, Hungarian) and <strong>complementarity</strong> (8 features — all <code>skill_*</code> columns, used by GMM).</p>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-3">
+        <h3>Models &amp; Methodology</h3>
+        <h4>Why Four Models?</h4>
+        <p>No single clustering algorithm naturally handles both matching objectives. The four models span the design space — K-Means and Agglomerative for similarity without size constraints, Hungarian for similarity with size constraints, and GMM for skill complementarity with soft assignments.</p>
+        <h4>Model 1 — K-Means Clustering (Baseline)</h4>
+        <p>K-Means partitions students into <em>k</em> clusters by minimizing within-cluster sum of squared distances. Fixed at <em>k</em> = 8 to match the target deployment scale of 3–5 students per team. An unconstrained silhouette sweep found <em>k</em> = 2 as optimal algorithmically, but this yields teams of ~15 and ~16 students that are unusable for deployment — precisely why Hungarian is needed.</p>
+        <h4>Model 2 — Agglomerative Hierarchical Clustering (Ward Linkage)</h4>
+        <p>Builds clusters bottom-up by successively merging the two nearest groups. Ward linkage merges the pair whose union minimizes the increase in within-cluster variance — making it directly comparable to K-Means. Produces a dendrogram for instructor interpretability. Does not enforce team size constraints.</p>
+        <h4>Model 3 — Hungarian Algorithm ★ (Primary Deployment Model)</h4>
+        <p>Solves the balanced assignment problem directly (Kuhn, 1955). A cost matrix is built from Euclidean distances between each student and each K-Means centroid, then expanded by replicating each centroid column <em>t</em> times (where <em>t</em> = ⌊N/k⌋). The permutation constraint of the assignment problem forces each centroid to receive exactly <em>t</em> students — guaranteeing balanced team sizes. Overflow students (when N mod k ≠ 0) are assigned greedily to their nearest centroid. Implemented via <code>scipy.optimize.linear_sum_assignment</code>.</p>
+        <h4>Model 4 — Gaussian Mixture Model ★</h4>
+        <p>Models the skill data as a mixture of <em>k</em> multivariate Gaussians, estimated via the Expectation-Maximization (EM) algorithm. Unlike K-Means, GMM produces <strong>soft assignments</strong> — a posterior probability vector over components for each student. Students with a maximum posterior below 0.60 are flagged as ambiguous for instructor review. The number of components was selected via BIC sweep over <em>k</em> ∈ [2, 8].</p>
+        <div class="info-box">
+          On this cohort, with N = 31 and 8 full-covariance components, GMM converged to near-deterministic posteriors (max posterior ≈ 1.00 for every student). Zero students were flagged as ambiguous. This is a known small-sample behavior — the mechanism is correct; this cohort simply does not exercise it.
+        </div>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-4">
+        <h3>Evaluation Results</h3>
+        <h4>Metric Definitions</h4>
+        <p>Six metrics were reported across all four models. <strong>Algorithmic metrics</strong>: Silhouette Score (↑ higher = better), Davies-Bouldin Index (↓ lower = better), Calinski-Harabasz Index (↑ higher = better). <strong>Domain metrics</strong>: Intra-team Skill Variance, Schedule Overlap (mean Jaccard similarity of availability vectors across within-team pairs, ↑ higher = better), and Skill Coverage (mean number of skill dimensions where ≥1 team member scores ≥3/5, ↑ higher = better).</p>
+        <h4>Comparison Table</h4>
+        <ul>
+          <li><strong>K-Means:</strong> Team sizes 2–10 | Silhouette 0.0944 | Schedule Overlap 0.6278 ★ | Skill Coverage 7.875 ★</li>
+          <li><strong>Agglomerative:</strong> Team sizes 2–7 | Silhouette 0.0938 | Schedule Overlap 0.6174 | Skill Coverage 7.75</li>
+          <li><strong>Hungarian:</strong> Team sizes 3–6 ★ | Silhouette 0.0430 | Schedule Overlap 0.6069 | Skill Coverage 7.875 ★</li>
+          <li><strong>GMM:</strong> Team sizes 3–6 | Silhouette 0.1502 ★ | Davies-Bouldin 1.3610 ★ | Calinski-Harabasz 6.3377 ★ | Schedule Overlap 0.4845 | Skill Coverage 6.75</li>
+        </ul>
+        <h4>Key Interpretations</h4>
+        <p><strong>GMM wins all three algorithmic metrics</strong> — operating on a lower-dimensional 8-feature skill space where clusters have more room to separate. <strong>Hungarian ties K-Means on skill coverage (7.875/8)</strong> while being the only model guaranteeing every team has 3–6 students. K-Means's small lead in schedule overlap (0.6278 vs 0.6069) is the 3.3% cost of Hungarian's balancing constraint — a worthwhile trade-off for deployment. GMM's low schedule overlap (0.4845) is expected: it ignores schedule entirely, optimizing for skill complementarity instead.</p>
+        <h4>GPA Sensitivity Analysis</h4>
+        <p>K-Means was run with and without <code>gpa_band</code>. The Adjusted Rand Index between the two clusterings was <strong>0.34</strong> — moderate, not negligible. Schedule overlap was actually slightly <em>higher</em> without GPA (0.6278 vs 0.6044), suggesting GPA actively pulls the clustering away from its primary objective. Recommended deployment protocol: present the instructor with both configurations and let them decide whether GPA should be included.</p>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-5">
+        <h3>Feature Importance via PCA</h3>
+        <h4>Variance Explained</h4>
+        <p>PCA was run on the 37-feature combined set. PC1 explains 15.80% of variance; PC2 explains 13.46% (cumulative 29.26%). Eleven components are required to reach 80% and 14 to reach 90% — consistent with a survey where no handful of items dominates student differentiation.</p>
+        <h4>PC1 — Day-of-Week Availability (15.8%)</h4>
+        <p>PC1 is overwhelmingly an availability axis. Top positive loadings: <code>avail_sat</code> (+0.378), <code>avail_sun</code> (+0.378), <code>avail_tue</code> (+0.370), <code>avail_thu</code> (+0.333). Top negative loading: <code>avail_mon</code> (−0.255). PC1 separates students available on non-standard schedules from those anchored to Monday-centered availability.</p>
+        <h4>PC2 — Work Style &amp; Meeting Mode (13.5%)</h4>
+        <p>PC2 is a work-style + meeting-mode axis. Top positive loadings: <code>conflict_direct</code> (+0.409), <code>meeting_nopref</code> (+0.405), <code>avail_evening</code> (+0.391). Top negative loadings: <code>conflict_natural</code> (−0.332), <code>meeting_inperson</code> (−0.329). PC2 separates students preferring direct conflict handling and flexible meeting modes from those preferring natural conflict resolution and in-person meetings.</p>
+        <h4>Key Finding — Skills Are Not a Top-2 Axis</h4>
+        <p>Skill features (<code>skill_*</code>) do not appear in the top loadings for either PC1 or PC2. The first skill feature (<code>skill_research</code>, loading −0.252) appears on PC3. Within this cohort, <strong>students differentiate primarily on schedule and work-style — not on self-rated technical skill.</strong> Skill ratings are relatively compressed (most students cluster in the middle-to-upper Likert range), contributing less variance than the more heterogeneously distributed availability and work-style features.</p>
+        <p>This directly supports the two-feature-set design: running GMM on skills alone isolates a signal that would otherwise be swamped if combined with the higher-variance schedule features.</p>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-6">
+        <h3>Limitations &amp; Assumptions</h3>
+        <h4>Dataset Limitations</h4>
+        <ul>
+          <li><strong>Sample size (N = 31).</strong> Sufficient for team formation within this cohort, but too small for statistical generalization or external validation.</li>
+          <li><strong>Single class section.</strong> All respondents are DTSC 2302 students. Results may not transfer to other disciplines or course levels.</li>
+          <li><strong>Static snapshot.</strong> The survey captures preferences at one moment. Real team dynamics evolve over a semester.</li>
+          <li><strong>Self-report bias.</strong> Students may over- or under-rate skills for social or strategic reasons. Items are framed as "comfort/confidence" rather than proficiency claims to mitigate this.</li>
+        </ul>
+        <h4>Modeling Assumptions</h4>
+        <ul>
+          <li><strong>Equal ordinal spacing.</strong> Ordinal encoding assumes adjacent categories are equidistant. Min-Max normalization partially mitigates by rescaling to [0,1].</li>
+          <li><strong>Euclidean distance on mixed features.</strong> K-Means and Hungarian use Euclidean distance on a mixed binary/continuous feature space. Gower's similarity (which handles mixed types natively) was not implemented; future work should compare.</li>
+          <li><strong>GMM Gaussian assumption.</strong> Skill ratings on a 1–5 Likert scale are not truly Gaussian. BIC selection partially mitigates overfitting risk.</li>
+          <li><strong>Missing GPA ≈ random.</strong> Median imputation assumes missingness is not correlated with a specific GPA range. With only 2 missing rows the bias is small in absolute terms, but would scale with missingness rate in a larger deployment.</li>
+        </ul>
+        <h4>Evaluation Limitations</h4>
+        <ul>
+          <li><strong>No ground-truth labels.</strong> We cannot measure whether algorithmically formed teams actually produce better outcomes than random assignment. That requires a post-project team satisfaction survey — planned as future work.</li>
+          <li><strong>Silhouette floor effect.</strong> With 31 students in 8 teams, silhouette scores are structurally bounded below their theoretical maximum. Absolute values are less informative than cross-model comparison.</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-7">
+        <h3>Ethics, Bias &amp; Equity</h3>
+        <h4>Human-in-the-Loop Design</h4>
+        <p>The system is explicitly designed as a <strong>recommendation tool</strong>, not an autonomous decision-maker. Its output is a set of candidate team configurations with interpretable metrics. No single composite score is reported — the six metrics deliberately disagree across objectives. The instructor makes final decisions and can override based on context the algorithm cannot see: known interpersonal conflicts, disability accommodations, previous team history, or external commitments.</p>
+        <h4>Fairness Considerations</h4>
+        <p>Demographic variables (race, gender, ethnicity, nationality, disability, socioeconomic status) are explicitly excluded. GPA is the only potentially demographic-correlated variable, and it is collected optionally. Section 5.4 shows GPA has a moderate effect on assignments (ARI = 0.34), motivating the recommendation to present instructors with both with-GPA and without-GPA configurations.</p>
+        <h4>Self-Report Bias &amp; Equity</h4>
+        <p>Students from backgrounds where confidence expression is culturally discouraged may systematically under-rate themselves. Mitigations: (1) survey items are framed as <em>comfort</em> rather than <em>ability</em>; (2) the Hungarian Algorithm's size constraint forces diverse teams, pairing low- and high-self-rated students; (3) the Skill Coverage metric measures whether <em>anyone</em> on the team reaches each skill threshold, preventing teams of self-underraters from being invisible.</p>
+        <h4>Privacy</h4>
+        <p>The raw CSV stays local and is excluded from the public repository via <code>.gitignore</code>. The processed CSV is row-shuffled before saving. The published file contains no names, emails, IDs, timestamps, or ordering artifacts.</p>
+        <h4>Equity Constraint (Planned)</h4>
+        <p>When deploying the GMM model, no team should be composed entirely of students self-rating below threshold on any single skill dimension. This is documented as a deployment requirement but is not yet implemented in code.</p>
+        <h4>Algorithmic Authority &amp; Anchoring</h4>
+        <p>Even with human-in-the-loop design, an algorithmic recommendation creates anchoring pressure — instructors may accept it by default. To counter this, the system surfaces multiple model configurations rather than a single ranked output, and reports an ambiguity flag from GMM for students with soft membership probability below 0.60. This cohort produced zero flagged students, but the mechanism remains in the system for future deployments.</p>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-8">
+        <h3>Conclusion</h3>
+        <p>The Teammate Matcher demonstrates that optimal academic team formation requires treating <em>similarity</em> and <em>complementarity</em> as distinct objectives with distinct feature sets and distinct algorithms. Across four models, no single configuration dominates all metrics — <strong>the choice of "best" model depends on what you optimize for.</strong></p>
+        <h4>Primary Findings</h4>
+        <ol>
+          <li><strong>Hungarian Algorithm is the recommended deployment model</strong> — it guarantees balanced team sizes and ties for the highest skill coverage at 7.875/8 dimensions per team.</li>
+          <li><strong>GMM complements Hungarian</strong> rather than replacing it. It identifies latent skill archetypes via soft component assignments. On this cohort GMM converged sharply and the ambiguity flag returned zero students, but the mechanism remains useful for larger future deployments.</li>
+          <li><strong>Schedule availability and work-style dominate student differentiation; self-rated skills are a weaker, lower-variance axis.</strong> PC1 is a day-of-week availability axis (15.8%), PC2 is conflict/meeting style (13.5%), and skills do not appear in top loadings until PC3.</li>
+          <li><strong>GPA has moderate, not negligible, influence on assignments</strong> (ARI = 0.34). Schedule overlap is slightly higher without GPA (0.628 vs 0.604), suggesting GPA actively pulls the clustering away from its primary objective. The recommended protocol is to present both configurations to the instructor.</li>
+        </ol>
+        <h4>Future Work</h4>
+        <ul>
+          <li>Collect post-project team-satisfaction data to validate whether algorithmically formed teams produce lower-friction outcomes than random assignment.</li>
+          <li>Extend to multi-section deployment to test generalization.</li>
+          <li>Implement the minimum-skill-diversity equity constraint in code.</li>
+          <li>Compare Euclidean distance against Gower's similarity for mixed feature types.</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-9">
+        <h3>Code &amp; Reproducibility</h3>
+        <h4>Repository Structure</h4>
+        <pre><code>teammate-matcher/
+├── data/
+│   ├── raw_survey_responses.csv     # local only (gitignored)
+│   └── processed_survey_data.csv   # shuffled, published
+├── survey/
+│   └── survey_questions.md         # full instrument
+├── src/
+│   ├── preprocess.py               # 9-step pipeline
+│   ├── models.py                   # 4 model wrappers
+│   └── evaluate.py                 # 6 evaluation metrics
+├── notebooks/
+│   ├── 01_eda.ipynb
+│   ├── 02_preprocessing.ipynb
+│   ├── 03_models_1_2.ipynb         # K-Means + Agglomerative
+│   ├── 04_models_3_4.ipynb         # Hungarian + GMM
+│   └── 05_evaluation.ipynb         # comparison + PCA biplot
+└── outputs/
+    ├── pipeline_diagram.png
+    ├── schedule_heatmap.png
+    ├── pca_biplot.png
+    ├── comparison_metrics.png
+    ├── gmm_ambiguity.png
+    ├── evaluation_metrics.csv
+    └── team_assignments/
+        ├── kmeans_teams.csv
+        ├── agglomerative_teams.csv
+        ├── hungarian_teams.csv
+        └── gmm_teams.csv</code></pre>
+        <h4>Reproducibility Notes</h4>
+        <p>All random processes are seeded with <code>random_state = 42</code>. <code>run_pipeline()</code> in <code>src/preprocess.py</code> is the single entry point from raw CSV to processed features. Notebooks are numbered and should be run in sequence, but each also stands alone — later notebooks re-run the pipeline from raw data.</p>
+        <p>Full source code, preprocessing pipeline, model wrappers, evaluation metrics, Jupyter notebooks, and all generated figures are available at <a href="https://github.com/HPAuncc/teammate-matcher" target="_blank">github.com/HPAuncc/teammate-matcher</a>.</p>
+      </div>
+
+      <div class="tab-panel" id="techreport-tab-10">
+        <h3>References &amp; AI Transparency</h3>
+        <ul class="ref-list">
+          <li>Akgun, S., &amp; Greenhow, C. (2022). Artificial intelligence in education: Addressing ethical challenges in K-12 settings. <em>AI and Ethics</em>, <em>2</em>, 431–440. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8455229/" target="_blank">https://pmc.ncbi.nlm.nih.gov/articles/PMC8455229/</a></li>
+          <li>Bishop, C. M. (2006). <em>Pattern recognition and machine learning</em>. Springer.</li>
+          <li>Harris, C. R., et al. (2020). Array programming with NumPy. <em>Nature</em>, <em>585</em>(7825), 357–362. <a href="https://doi.org/10.1038/s41586-020-2649-2" target="_blank">https://doi.org/10.1038/s41586-020-2649-2</a></li>
+          <li>Hunter, J. D. (2007). Matplotlib: A 2D graphics environment. <em>Computing in Science &amp; Engineering</em>, <em>9</em>(3), 90–95. <a href="https://doi.org/10.1109/MCSE.2007.55" target="_blank">https://doi.org/10.1109/MCSE.2007.55</a></li>
+          <li>Jonker, R., &amp; Volgenant, A. (1987). A shortest augmenting path algorithm for dense and sparse linear assignment problems. <em>Computing</em>, <em>38</em>(4), 325–340. <a href="https://doi.org/10.1007/BF02278710" target="_blank">https://doi.org/10.1007/BF02278710</a></li>
+          <li>Kuhn, H. W. (1955). The Hungarian method for the assignment problem. <em>Naval Research Logistics Quarterly</em>, <em>2</em>(1–2), 83–97. <a href="https://doi.org/10.1002/nav.3800020109" target="_blank">https://doi.org/10.1002/nav.3800020109</a></li>
+          <li>Kyprianidou, M., Demetriadis, S., Tsiatsos, T., &amp; Pombortsis, A. (2012). Group formation based on learning styles. <em>Educational Technology Research and Development</em>, <em>60</em>(1), 83–110. <a href="https://doi.org/10.1007/s11423-011-9215-4" target="_blank">https://doi.org/10.1007/s11423-011-9215-4</a></li>
+          <li>McKinney, W. (2010). Data structures for statistical computing in Python. <em>Proceedings of the 9th Python in Science Conference</em>, 56–61. <a href="https://doi.org/10.25080/Majora-92bf1922-00a" target="_blank">https://doi.org/10.25080/Majora-92bf1922-00a</a></li>
+          <li>Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. <em>Journal of Machine Learning Research</em>, <em>12</em>, 2825–2830.</li>
+          <li>Python Software Foundation. (2024). <em>Python</em> (Version 3.12). <a href="https://www.python.org/" target="_blank">https://www.python.org/</a></li>
+          <li>Virtanen, P., et al. (2020). SciPy 1.0: Fundamental algorithms for scientific computing in Python. <em>Nature Methods</em>, <em>17</em>(3), 261–272. <a href="https://doi.org/10.1038/s41592-019-0686-2" target="_blank">https://doi.org/10.1038/s41592-019-0686-2</a></li>
+          <li>Waskom, M. L. (2021). seaborn: Statistical data visualization. <em>Journal of Open Source Software</em>, <em>6</em>(60), 3021. <a href="https://doi.org/10.21105/joss.03021" target="_blank">https://doi.org/10.21105/joss.03021</a></li>
+        </ul>
+        <p style="margin-top:1rem;">Claude (Anthropic) was used as a coding assistant throughout development. All generated code was reviewed, tested, and modified by the authors. <em>Co-authored with Hampton Abbott, DTSC 2302, University of North Carolina at Charlotte, Spring 2026.</em></p>
       </div>
 
     </div>

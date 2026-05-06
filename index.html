@@ -623,22 +623,24 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
 
       <div class="tab-panel" id="birds-tab-4">
         <h3>What we found</h3>
-        <h4>1. The Hungarian Algorithm is the model we'd actually deploy</h4>
-        <p>It is the only one of the four that guaranteed every team contained between three and six students — the other models routinely produced oversized teams (one K-Means cluster contained 10 students) or two-person teams too small to cover the project's required skills. It also tied for the highest skill coverage (7.875 out of 8 skill dimensions per team). Its silhouette score is the lowest of the four, which is the explicit cost of forcing balanced sizes — but for a deployment context, balanced and slightly-less-tight is far more useful than tight-but-unusable.</p>
-        <h4>2. Schedule, not skill, is what separates students</h4>
+        <p>Three findings stood out, and not all of them were the ones we expected.</p>
+        <h4>1. The Hungarian Algorithm is the model we'd actually deploy.</h4>
+        <p>It is the only one of the four that guaranteed every team contained between three and six students — the other models routinely produced oversized teams (one K-Means cluster contained 10 students) or two-person teams too small to cover the project's required skills. It also tied for the highest <em>skill coverage</em> (7.875 out of 8 skill dimensions per team), meaning Hungarian-formed teams almost always had at least one member confident in each major skill area. Its silhouette score is the lowest of the four, which is the explicit cost of forcing balanced sizes — but for a deployment context, balanced and slightly-less-tight is far more useful than tight-but-unusable.</p>
+        <h4>2. Schedule, not skill, is what separates students.</h4>
+        <p>Looking at the raw availability matrix gives the first hint:</p>
         <img src="schedule_heatmap.png" alt="The Schedule Heatmap" width="95%">
-        <p>When we ran Principal Component Analysis on the full feature set, the first principal component (15.8% of variance) was dominated by day-of-week availability — weekend, Tuesday, and Thursday loadings positive; Monday loading negative. The second component (13.5%) was conflict-handling and meeting-mode preferences. <strong>Self-rated skill features did not appear in the top loadings until the third principal component.</strong></p>
-        <img src="pca_biplot.png" alt="The PCA Biplot" width="95%">
-        <p>Within this cohort, students differentiate primarily on <em>when they can meet</em> and <em>how they handle conflict</em> — not on what they say they're good at. An algorithm that spends its energy matching on skills will have very little signal to work with.</p>
-        <h4>3. GPA is not a neutral feature</h4>
-        <p>We ran K-Means with and without <code>gpa_band</code> and compared resulting cluster labels using the Adjusted Rand Index. The score was <strong>0.34</strong> — moderately low. Removing GPA actually <em>improved</em> the schedule-overlap metric slightly (0.628 versus 0.604). GPA was actively pulling the clustering away from its primary objective.</p>
-        <h4>4. GMM produced sharp, not soft, archetypes</h4>
-        <p>One of the design promises of GMM is that it returns probabilistic assignments — a vector of probabilities over latent components for each student — and we built an “ambiguity flag” intended to surface students whose maximum component probability fell below 0.60. In a larger or more diverse cohort, those flagged students would get instructor review.</p>
-        <p>In our cohort, zero students were flagged. Every single one of the 31 students locked tightly onto exactly one of the eight latent skill archetypes:</p>
+        <p>The heatmap shows uneven availability: weekday afternoons and evenings are dense, weekends and late-night slots are sparse, and individual students vary widely in how many slots they can offer. That heterogeneity is exactly the signal a clustering algorithm can latch onto.</p>
+        <p>When we ran Principal Component Analysis on the full feature set to formalize that intuition, the first principal component (15.8% of variance) was dominated by day-of-week availability — weekend, Tuesday, and Thursday loadings positive; Monday loading negative. The second component (13.5%) was conflict-handling and meeting-mode preferences. <strong>Self-rated skill features did not appear in the top loadings until the third principal component.</strong></p>
+        <img src="pca_biplot (1).png" alt="The PCA Biplot" width="95%">
+        <p>This is a pedagogically important finding. It means that within this cohort, students differentiate primarily on <em>when they can meet</em> and <em>how they handle conflict</em> — not on what they say they're good at. Skills, in self-report at least, are surprisingly homogeneous. That has direct consequences for any future deployment: an algorithm that spends its energy matching on skills will have very little signal to work with.</p>
+        <h4>3. GPA is not a neutral feature.</h4>
+        <p>We were curious whether including GPA in the feature set would meaningfully change team assignments. We ran K-Means with and without <code>gpa_band</code> and compared the resulting cluster labels using the Adjusted Rand Index — a standard measure of how similar two partitions are, where 1.0 is identical and 0.0 is random. The score was <strong>0.34</strong> — moderately low. Removing GPA actually <em>improved</em> the schedule-overlap metric slightly (0.628 versus 0.604). In other words, GPA was actively pulling the clustering away from its primary objective.</p>
+        <p>This was the most ethically significant finding in the project. GPA is a demographically loaded variable in the U.S. educational system (Eubanks, 2018; Selbst et al., 2019) — correlated with socioeconomic status, prior preparation, and access to academic support. A modeling decision as innocuous-sounding as "let's include GPA as one of fifty features" turned out to reshape teams measurably, and not in a direction that helped. We had assumed GPA would be a passive ingredient. It wasn't.</p>
+        <h4>4. GMM produced sharp, not soft, archetypes.</h4>
+        <p>One of the design promises of GMM is that it returns <em>probabilistic</em> assignments — a vector of probabilities over latent components for each student — and we built an "ambiguity flag" intended to surface students whose maximum component probability fell below 0.60. In a larger or more diverse cohort, those flagged students would get instructor review.</p>
+        <p>In our cohort, <strong>zero students were flagged.</strong> Every single one of the 31 students locked tightly onto exactly one of the eight latent skill archetypes.</p>
         <img src="gmm_ambiguity.png" alt="The GMM Visualization" width="95%">
-        <div class="info-box amber">
-          The uneven availability across the cohort — weekday afternoons dense, weekends and late-night sparse — is the binding constraint on all three similarity-based models. A larger or more temporally diverse sample would be the highest-value next step.
-        </div>
+        <p>This is not a failure of the algorithm; it is a property of the data. With 31 students, 8 skill features, and 8 mixture components estimated with full covariance matrices, GMM has enough flexibility to fit each archetype tightly to its members. The ambiguity-flag mechanism still works as designed — it just had nothing to surface in this run. In a larger sample, or if we had restricted the covariance type to force softer assignments, we'd expect a meaningful number of borderline cases. The honest portfolio-post version of this finding is: <em>the capability is real, the result on this cohort was clean, and a future run on richer data is the test that would actually exercise it.</em></p>
       </div>
 
       <div class="tab-panel" id="birds-tab-5">
@@ -729,6 +731,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
 
       <div class="tab-panel active" id="techreport-tab-0">
         <h3>Introduction &amp; Research Questions</h3>
+        <img src="technical_report_thumbnail.png" alt="The Technical Report Thumbnail." width="95%">
         <h4>Abstract</h4>
         <p>Academic team formation in data science courses is typically left to random assignment or student self-selection, producing teams with scheduling conflicts, mismatched work styles, and uneven skill distribution. This report presents the <strong>Teammate Matcher</strong>, a data-driven application that optimizes academic team formation using four machine learning approaches: K-Means clustering, Agglomerative hierarchical clustering, size-constrained assignment via the <strong>Hungarian Algorithm</strong>, and <strong>Gaussian Mixture Models (GMM)</strong>. Primary survey data were collected from 31 students in DTSC 2302, capturing availability, work style, communication preferences, and self-rated technical skills. Responses were preprocessed through a nine-step pipeline producing 50 features across two feature sets: <em>compatibility features</em> (availability + work style, used for similarity-based models) and <em>complementarity features</em> (8 skill dimensions, used for diversity-based GMM). Hungarian Assignment produced the most practically deployable configuration — balanced teams of 3–6 students with near-complete skill coverage (7.875/8 dimensions per team) — while GMM identified latent skill archetypes via soft membership probabilities. The ambiguity-flag mechanism (max posterior &lt; 0.60) returned zero borderline cases on this cohort: with N = 31 and full-covariance components, GMM converges to near-deterministic posteriors. The mechanism is correct; this cohort simply does not exercise it.</p>
         <p>Principal Component Analysis confirmed that availability and work-style are the primary axes of student differentiation (PC1 = day-of-week availability, 15.8%; PC2 = conflict/meeting style, 13.5%), with self-rated skills appearing only as a secondary axis from PC3 onward. This supports the decision to run skill-based clustering on skills alone rather than combining feature sets.</p>
@@ -791,7 +794,9 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
           <li>Course code variants in raw data: 11 (all normalize to DTSC 2302)</li>
         </ul>
         <p><strong>Sample size rationale:</strong> 31 responses is sufficient to form 7–8 teams of 3–5 students, the target deployment scale. It limits statistical generalization, but the goal is not population inference — it is optimal team formation within this cohort.</p>
-        <p><strong>Cohort availability profile.</strong> The 11-dimensional availability vector for each student — 7 day-of-week binaries plus 4 time-of-day binaries — exhibits substantial heterogeneity, which is the variance the similarity-based models operate on. Weekday afternoons and evenings are dense; weekends and the late-night slot are sparse. This descriptive view foreshadows the PCA finding in Section 6: day-of-week availability is the primary axis along which students differentiate.</p>
+        <p><strong>Cohort availability profile.</strong> The 11-dimensional availability vector for each student — 7 day-of-week binaries plus 4 time-of-day binaries — exhibits substantial heterogeneity, which is the variance the similarity-based models operate on. Weekday afternoons and evenings are dense; weekends and the late-night slot are sparse.</p>
+        <img src="schedule_heatmap.png" alt="The Schedule Heatmap" width="95%">
+        <p>This descriptive view foreshadows the PCA finding in Section 6: day-of-week availability is the primary axis along which students differentiate.</p>
         <h4>Anonymity &amp; Quasi-Identifier Analysis</h4>
         <p>The survey promised anonymity. The raw CSV contains a <code>Timestamp</code> column (exact submission time to the second) which is a quasi-identifier: in a class of 31 students who know each other, "who submitted at 11:30 AM on April 17th" can narrow down the respondent. Two protective measures address this:</p>
         <ol>
@@ -847,6 +852,8 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
 
       <div class="tab-panel" id="techreport-tab-3">
         <h3>Models &amp; Methodology</h3>
+        <p>The end-to-end methodology is summarized below. Raw survey responses pass through the 9-step preprocessing pipeline (Section 3) and are split into two feature sets (compatibility and complementarity). Three models operate on the compatibility set; one model operates on the complementarity set. All four are evaluated on the same six metrics (Section 5), and the ranked configurations are passed to the instructor for final review:</p>
+        <img src="pipeline_diagram.png" alt="The Pipeline Diagram" width="95%">
         <h4>Why Four Models?</h4>
         <p>No single clustering algorithm naturally handles both matching objectives. The chosen four span the design space:</p>
         <ul>

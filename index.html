@@ -428,7 +428,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
     <div class="proj-modal-body">
 
       <div class="tab-panel active" id="scdb-tab-0">
-        <h3>Problem Definition</h3>
+        <h3>Portfolio Post: Problem Definition</h3>
         <p>
           Can a machine learning model predict how a Supreme Court justice will vote on a case based on who they are and what type of case is before them?
         </p>
@@ -441,7 +441,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
       </div>
 
       <div class="tab-panel" id="scdb-tab-1">
-        <h3>Data Description</h3>
+        <h3>Technical Report: Data Description</h3>
         <p>
           This project uses the Supreme Court Database (SCDB), version 2025_01, justice-centered and organized by legal provision. The SCDB is maintained by Harold J. Spaeth and colleagues and is one of the most comprehensive datasets on U.S. Supreme Court decisions, spanning cases from 1946 to the present term.
         </p>
@@ -454,7 +454,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
       </div>
 
       <div class="tab-panel" id="scdb-tab-2">
-        <h3>Data Cleaning &amp; Preparation</h3>
+        <h3>Technical Report: Data Cleaning &amp; Preparation</h3>
         <p>
           Of the 61 original columns, only 13 were retained for modeling. Columns removed included all case identifiers (IDs, docket numbers, citation strings), free-text fields, date columns, and post-decision variables that would leak outcome information into the features. The remaining columns were selected because they are likely available at or before decision time.
         </p>
@@ -467,7 +467,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
       </div>
 
       <div class="tab-panel" id="scdb-tab-3">
-        <h3>Modeling Approach</h3>
+        <h3>Technical Report: Modeling Approach</h3>
         <p>
           Three classifiers were trained and compared, each representing a different algorithmic family:
         </p>
@@ -490,7 +490,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
       </div>
 
       <div class="tab-panel" id="scdb-tab-4">
-        <h3>Results</h3>
+        <h3>Technical Report: Results</h3>
         <h4>Accuracy &amp; Weighted Metrics</h4>
         <img src="Model_Comparison.png" alt="The Comparison of All Models for Accuracy Metrics." width="80%">
         <p>
@@ -512,7 +512,7 @@ code { background:#f0ece8; padding:.15em .4em; border-radius:4px; font-size:.82e
       </div>
 
       <div class="tab-panel" id="scdb-tab-5">
-        <h3>Ethics &amp; Reflection</h3>
+        <h3>Portfolio Post: Ethics &amp; Reflection</h3>
         <p>
           Predicting judicial votes raises meaningful ethical concerns beyond model performance. Judges are people, not data points, and reducing a justice's decision to a predicted output based on their identity and a case category risks flattening the complexity of legal reasoning into a statistical pattern. The model does not know what arguments were made, how briefs were written, or what values a justice weighed. The model only knows how a Justice voted in a certain way for certain cases in the past.
         </p>
